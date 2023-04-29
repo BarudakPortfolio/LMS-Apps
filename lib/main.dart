@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/routes/app_routes.dart';
+import 'package:lms/src/views/screens/splash_screen.dart';
 
 import 'src/views/screens/login_screen.dart';
 import 'injection.dart' as di;
@@ -23,7 +24,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "LMS koCak",
       routes: AppRoutes.routes,
-      home: const LoginScreen(),
+      home: SplashScreen(),
     );
   }
 }
