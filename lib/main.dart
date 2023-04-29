@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lms/src/core/routes/app_routes.dart';
+
+import 'src/views/screens/login_screen.dart';
+import 'injection.dart' as di;
 
 void main() {
-  runApp(const MainApp());
+  di.init();
+  runApp(
+    const ProviderScope(
+      child: MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -9,12 +19,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "LMS koCak",
+      routes: AppRoutes.routes,
+      home: const LoginScreen(),
     );
   }
 }
