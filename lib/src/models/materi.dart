@@ -1,7 +1,6 @@
-import 'package:e_learning/models/kelas_mapel.dart';
-
 import 'file.dart';
 import 'foto.dart';
+import 'kelas_mapel.dart';
 import 'mapel.dart';
 
 class Materi {

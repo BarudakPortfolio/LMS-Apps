@@ -1,4 +1,4 @@
-import '../core/extentions/nama_dosen.dart';
+import '../core/utils/extentions/nama_dosen.dart';
 
 class Kelas {
   String? id;
