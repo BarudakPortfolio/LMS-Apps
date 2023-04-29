@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lms/src/features/auth/provider/auth_notifier.dart';
+import 'package:lms/src/features/auth/provider/auth_state.dart';
+import 'package:lms/src/views/components/snackbar_widget.dart';
 
 import '../../core/style/theme.dart';
 import '../components/form_input.dart';
@@ -17,12 +20,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController usernameCtrl = TextEditingController();
   final TextEditingController passCtrl = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  void handleLogin() {
-    if (_formKey.currentState!.validate()) {
-    } else {}
-  }
-
   @override
   void dispose() {
     usernameCtrl.dispose();
@@ -32,6 +29,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = ref.watch(authNotifierProvider);
+    final state = ref.watch(authNotifierProvider).state;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(children: [
@@ -59,7 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       buildHeader(),
                       const SizedBox(height: 15),
-                      buildFormLogin()
+                      buildFormLogin(auth, state)
                     ],
                   ),
                 ),
@@ -87,7 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Card buildFormLogin() {
+  Card buildFormLogin(AuthNotifier auth, AuthState state) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 5,
@@ -144,7 +143,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               borderRadius: BorderRadius.circular(
                             10,
                           ))),
-                      onPressed: handleLogin,
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          await auth.login(usernameCtrl.text, passCtrl.text);
+                          if (state.isAuthenticated) {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                buildSnackBar("Sukses Login", Colors.green));
+                          }
+                        } else {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              buildSnackBar("Gagal Login", Colors.red));
+                        }
+                      },
                       child: const Text("Masuk"),
                     )
                   ]),

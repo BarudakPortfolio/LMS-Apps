@@ -12,7 +12,7 @@ class MainApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       title: "LMS koCak",
       routes: AppRoutes.routes,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.splash,
     );
   }
 }

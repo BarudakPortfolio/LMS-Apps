@@ -9,7 +9,7 @@ final authApiProvider = Provider<AuthApi>((ref) {
 });
 
 class AuthApi {
-  static const _baseUrl = 'https://elearning.itg.ac.id/api/';
+  static const _baseUrl = 'https://elearning.itg.ac.id/api';
   Future<Either<String, String>> login(
       {required String username, required String password}) async {
     Uri url = Uri.parse('$_baseUrl/auth/login');
@@ -19,8 +19,9 @@ class AuthApi {
     };
     final response = await http.post(
       url,
-      body: json.encode(body),
+      body: body,
     );
+    print(response.body);
 
     final result = json.decode(response.body);
     if (response.statusCode == 200) {

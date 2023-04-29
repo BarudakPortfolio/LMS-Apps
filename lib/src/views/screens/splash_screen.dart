@@ -2,61 +2,36 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/routes/app_routes.dart';
-import '../../core/style/theme.dart';
-import '../services/storaged.dart';
+import 'package:lms/src/core/routes/app_routes.dart';
+import 'package:lms/src/features/auth/provider/auth_notifier.dart';
+import 'package:lms/src/features/auth/provider/auth_state.dart';
 
-class SplashScreen extends StatefulWidget {
+import '../../core/style/theme.dart';
+
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  var storage = SecureStorage();
-  var userProvider = UserProvider();
-
-  Future<bool> loginCheck() async {
-    bool isLogin = false;
-    String? token = await storage.read('token');
-    if (token != null) {
-      String username = await storage.read('username');
-      String password = await storage.read('password');
-      bool result = await userProvider.login(username, password);
-      isLogin = result;
-    }
-    return isLogin;
-  }
-
-  @override
-  // void initState() {
-  //   loginCheck().then((value) {
-  //     if (value) {
-  //       Navigator.pushNamedAndRemoveUntil(
-  //           context, AppRoutes.main, (route) => false);
-  //     } else {
-  //       Navigator.pushNamedAndRemoveUntil(
-  //           context, AppRoutes.login, (route) => false);
-  //     }
-  //   });
-
-  //   super.initState();
-  // }
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
-    super.initState();
-    Future.delayed(Duration(seconds: 3)).then((value) {
-      loginCheck().then((value) {
-        if (value) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.main, (route) => false);
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.login, (route) => false);
-        }
-      });
+    final AuthState state = ref.read(authNotifierProvider).state;
+    Future.microtask(() {
+      ref.read(authNotifierProvider).loginCheck(ref);
+      if (state.isAuthenticated) {
+        if (!mounted) return;
+        // Navigator.pushNamedAndRemoveUntil(
+        //     context, AppRoutes.main, (route) => false);
+      } else {
+        if (!mounted) return;
+        Navigator.pushNamedAndRemoveUntil(
+            context, AppRoutes.login, (route) => false);
+      }
     });
+    super.initState();
   }
 
   @override
@@ -97,12 +72,4 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-}
-
-class SecureStorage {
-  read(String s) {}
-}
-
-class UserProvider {
-  login(String username, String password) {}
 }

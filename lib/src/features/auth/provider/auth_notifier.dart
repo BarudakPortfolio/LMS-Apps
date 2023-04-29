@@ -1,20 +1,46 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lms/src/core/utils/storage.dart';
 
 import 'package:lms/src/features/auth/data/auth_api.dart';
+import 'package:lms/src/features/injection/injection_provider.dart';
 
+import '../../storage/storage_provider.dart';
 import 'auth_state.dart';
 
-class AuthNotifier extends StateNotifier {
-  final AuthApi _authApi;
+final authNotifierProvider = Provider<AuthNotifier>((ref) {
+  final getIt = ref.watch(getItProvider);
+  return AuthNotifier(
+    authApi: getIt.get<AuthApi>(),
+    storage: getIt.get<SecureStorage>(),
+  );
+});
 
-  AuthNotifier(this._authApi) : super(AuthState.unAuthenticated());
+class AuthNotifier extends StateNotifier {
+  final AuthApi authApi;
+  final SecureStorage storage;
+
+  AuthNotifier({required this.authApi, required this.storage})
+      : super(AuthState.unAuthenticated());
 
   Future login(String username, String password) async {
-    final token = await _authApi.login(username: username, password: password);
+    final token = await authApi.login(username: username, password: password);
     token.fold((l) {
       state = AuthState.unAuthenticated();
-    }, (r) {
+    }, (r) async {
+      await storage.write("token", r);
+      await storage.write("username", username);
+      await storage.write("password", password);
       state = AuthState.authenticated(r);
     });
+  }
+
+  Future loginCheck(WidgetRef ref) async {
+    String? token = await ref.read(secureStorage).read('token');
+    print(token);
+    if (token == null) {
+      state = AuthState.unAuthenticated();
+    } else {
+      state = AuthState.authenticated(token);
+    }
   }
 }

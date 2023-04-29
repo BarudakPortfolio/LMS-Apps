@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lms/src/views/screens/login_screen.dart';
+import 'package:lms/src/views/screens/splash_screen.dart';
 
 class AppRoutes {
   static const splash = '/splashscreen';
@@ -15,5 +16,6 @@ class AppRoutes {
 
   static Map<String, Widget Function(BuildContext)> routes = {
     AppRoutes.login: (context) => const LoginScreen(),
+    AppRoutes.splash: (context) => const SplashScreen(),
   };
 }
