@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:lms/src/views/screens/splash_screen.dart';
 
-import 'src/views/screens/login_screen.dart';
+import 'src/app.dart';
 import 'injection.dart' as di;
 
 void main() {
