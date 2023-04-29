@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:lms/src/features/auth/provider/auth_notifier.dart';
-import 'package:lms/src/features/auth/provider/auth_state.dart';
+import 'package:lms/src/features/storage/storage_provider.dart';
 
 import '../../core/style/theme.dart';
 
@@ -18,19 +18,22 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
-    final AuthState state = ref.read(authNotifierProvider).state;
-    Future.microtask(() {
-      ref.read(authNotifierProvider).loginCheck(ref);
-      if (state.isAuthenticated) {
-        if (!mounted) return;
-        // Navigator.pushNamedAndRemoveUntil(
-        //     context, AppRoutes.main, (route) => false);
-      } else {
-        if (!mounted) return;
-        Navigator.pushNamedAndRemoveUntil(
-            context, AppRoutes.login, (route) => false);
-      }
-    });
+    Future.microtask(
+      () {
+        ref.watch(secureStorage).read('token').then((value) {
+          if (value == null) {
+            Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+          } else {
+            ref.watch(secureStorage).readAll().then((value) {
+              ref
+                  .watch(authNotifierProvider)
+                  .login(value['username'], value['password']);
+              Navigator.of(context).pushReplacementNamed(AppRoutes.main);
+            });
+          }
+        });
+      },
+    );
     super.initState();
   }
 
