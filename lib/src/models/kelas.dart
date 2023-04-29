@@ -1,3 +1,5 @@
+import '../core/extentions/nama_dosen.dart';
+
 class Kelas {
   String? id;
   String? nama;

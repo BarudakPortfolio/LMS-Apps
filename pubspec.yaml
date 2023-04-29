@@ -7,8 +7,24 @@ environment:
   sdk: ">=2.19.4 <3.0.0"
 
 dependencies:
+  camera: ^0.10.4
+  dartz: ^0.10.1
+  file_picker: ^5.2.10
+  fluentui_system_icons: ^1.1.200
   flutter:
     sdk: flutter
+  flutter_riverpod: ^2.3.6
+  flutter_screenutil: ^5.7.0
+  flutter_widget_from_html: ^0.10.0
+  get_it: ^7.3.0
+  http: ^0.13.5
+  intl: ^0.18.1
+  lottie: ^2.3.2
+  open_file: ^3.3.1
+  shimmer_animation: ^2.1.0+1
+  time_planner: ^0.1.1
+  url_launcher: ^6.1.10
+  uuid: ^3.0.7
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +33,17 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/images/kelas/
+    - assets/lottie/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins-Black.ttf
+          weight: 500
