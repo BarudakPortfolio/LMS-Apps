@@ -128,7 +128,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       isObsecure: true,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "Harap Isi Username";
+                          return "Harap Isi Password";
                         }
                         return null;
                       },
