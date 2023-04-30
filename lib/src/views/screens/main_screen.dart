@@ -64,7 +64,11 @@ class MainScreen extends ConsumerWidget {
         ),
         body: IndexedStack(
           index: index,
-          children: [DashboardScreen(), ClassScreen(), AssignmentScreen()],
+          children: [
+            DashboardScreen(),
+            ClassScreen(),
+            AssignmentScreen(),
+          ],
         ));
   }
 }

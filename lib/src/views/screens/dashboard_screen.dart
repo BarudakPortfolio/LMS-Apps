@@ -24,10 +24,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   final ScrollController _scrollController =
       ScrollController(initialScrollOffset: 0);
 
-  getScrollOffset(WidgetRef ref) {
-    if (_scrollController.hasClients) {}
-  }
-
   @override
   void initState() {
     _scrollController.addListener(() {
