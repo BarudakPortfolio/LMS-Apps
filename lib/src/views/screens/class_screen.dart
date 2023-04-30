@@ -55,6 +55,7 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                 pinned: true,
                 delegate: MyTabBarDelegate(
                     tabBar: TabBar(
+                  padding: const EdgeInsets.all(10),
                   unselectedLabelColor: Colors.black,
                   indicator: BoxDecoration(
                     color: Theme.of(context).primaryColor,
@@ -71,24 +72,28 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
             ];
           },
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+            ),
             child: TabBarView(children: [
               ScrollConfiguration(
-                behavior: RemoveScrollGlow(),
-                child: ListView.separated(
-                  itemBuilder: (context, index) => ListTile(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    tileColor: Colors.white,
-                    title: Text("Nama"),
-                    subtitle: Text("waktu"),
-                  ),
-                  separatorBuilder: (context, index) => const SizedBox(
-                    height: 10,
-                  ),
-                  itemCount: 20,
-                ),
-              ),
+                  behavior: RemoveScrollGlow(),
+                  child: SingleChildScrollView(
+                    child: Column(
+                        children: List.generate(
+                      20,
+                      (index) => Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: ListTile(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          tileColor: Colors.white,
+                          title: const Text("Nama"),
+                          subtitle: const Text("waktu"),
+                        ),
+                      ),
+                    )),
+                  )),
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: ScrollConfiguration(
