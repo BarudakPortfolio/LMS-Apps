@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lms/src/views/screens/materi_screen.dart';
 
 import 'assignment_screen.dart';
 import 'class_screen.dart';
@@ -64,9 +65,10 @@ class MainScreen extends ConsumerWidget {
         ),
         body: IndexedStack(
           index: index,
-          children: [
+          children: const [
             DashboardScreen(),
             ClassScreen(),
+            MateriScreen(),
             AssignmentScreen(),
           ],
         ));

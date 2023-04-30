@@ -25,11 +25,9 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                 elevation: 0,
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 pinned: true,
-                floating: true,
-                collapsedHeight: 80,
-                expandedHeight: 120,
+                collapsedHeight: 60,
+                expandedHeight: 150,
                 flexibleSpace: FlexibleSpaceBar(
-                  expandedTitleScale: 1.3,
                   centerTitle: true,
                   collapseMode: CollapseMode.parallax,
                   title: SafeArea(
@@ -54,6 +52,7 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                 ),
               ),
               SliverPersistentHeader(
+                pinned: true,
                 delegate: MyTabBarDelegate(
                     tabBar: TabBar(
                   unselectedLabelColor: Colors.black,
@@ -68,7 +67,6 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                     Tab(text: "Jadwal Kelas"),
                   ],
                 )),
-                pinned: true,
               ),
             ];
           },
@@ -97,7 +95,6 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                   behavior: RemoveScrollGlow(),
                   child: TimePlanner(
                     style: TimePlannerStyle(
-                      showScrollBar: true,
                       horizontalTaskPadding: 5,
                       cellWidth: 120,
                     ),
@@ -112,7 +109,7 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                     tasks: [
                       TimePlannerTask(
                         color: Colors.green,
-                        minutesDuration: 90,
+                        minutesDuration: 60,
                         dateTime:
                             TimePlannerDateTime(day: 0, hour: 8, minutes: 0),
                         child: const ListTile(
@@ -120,7 +117,7 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                           subtitle:
                               Text("jam - jam", style: TextStyle(fontSize: 10)),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
