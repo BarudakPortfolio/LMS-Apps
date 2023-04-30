@@ -45,7 +45,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final isScrolled = ref.watch(scrollProvider);
     return Scaffold(
       appBar: AppBar(
-        elevation: isScrolled ? 1 : 0,
+        elevation: 0,
         backgroundColor: isScrolled
             ? Colors.white
             : Theme.of(context).scaffoldBackgroundColor,
