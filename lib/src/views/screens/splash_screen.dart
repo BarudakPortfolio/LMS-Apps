@@ -18,8 +18,8 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
-    final AuthState state = ref.read(authNotifierProvider).state;
-    Future.microtask(() {
+    Future.delayed(const Duration(seconds: 3)).then((_) {
+      final AuthState state = ref.read(authNotifierProvider).state;
       ref.read(authNotifierProvider).loginCheck(ref);
       if (state.isAuthenticated) {
         if (!mounted) return;
