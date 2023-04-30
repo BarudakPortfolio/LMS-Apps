@@ -15,7 +15,7 @@ final authNotifierProvider = Provider<AuthNotifier>((ref) {
   );
 });
 
-class AuthNotifier extends StateNotifier {
+class AuthNotifier extends StateNotifier<AuthState> {
   final AuthApi authApi;
   final SecureStorage storage;
 
@@ -34,13 +34,12 @@ class AuthNotifier extends StateNotifier {
     });
   }
 
-  Future loginCheck(WidgetRef ref) async {
+  Future loginCheck(ref) async {
     String? token = await ref.read(secureStorage).read('token');
-    print(token);
-    if (token == null) {
-      state = AuthState.unAuthenticated();
-    } else {
+    if (token!.isNotEmpty) {
       state = AuthState.authenticated(token);
+    } else {
+      state = AuthState.unAuthenticated();
     }
   }
 }
