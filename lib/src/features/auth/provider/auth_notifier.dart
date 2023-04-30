@@ -7,11 +7,12 @@ import 'package:lms/src/features/injection/injection_provider.dart';
 import '../../storage/storage_provider.dart';
 import 'auth_state.dart';
 
-final authNotifierProvider = Provider<AuthNotifier>((ref) {
+final authNotifierProvider =
+    StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final getIt = ref.watch(getItProvider);
   return AuthNotifier(
-    authApi: getIt.get<AuthApi>(),
-    storage: getIt.get<SecureStorage>(),
+    authApi: getIt<AuthApi>(),
+    storage: getIt<SecureStorage>(),
   );
 });
 
@@ -34,9 +35,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     });
   }
 
-  Future loginCheck(ref) async {
-    String? token = await ref.read(secureStorage).read('token');
-    if (token != null && token.isNotEmpty) {
+  Future loginCheck() async {
+    String? token = await storage.read('token');
+    if (token!.isNotEmpty) {
       state = AuthState.authenticated(token);
     } else {
       state = AuthState.unAuthenticated();

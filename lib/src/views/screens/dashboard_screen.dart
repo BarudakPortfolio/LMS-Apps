@@ -21,11 +21,11 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-  final ScrollController _scrollController =
-      ScrollController(initialScrollOffset: 0);
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
+    _scrollController = ScrollController(initialScrollOffset: 0);
     _scrollController.addListener(() {
       if (_scrollController.offset > 0) {
         ref.watch(scrollProvider.notifier).scrolled(true);
@@ -51,7 +51,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             padding: const EdgeInsets.only(right: 20.0),
             child: GestureDetector(
               onTap: () {},
-              child: CircleAvatar(),
+              child: const CircleAvatar(),
             ),
           ),
         ],

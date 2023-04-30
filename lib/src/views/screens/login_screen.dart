@@ -21,6 +21,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController usernameCtrl = TextEditingController();
   final TextEditingController passCtrl = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   void dispose() {
     usernameCtrl.dispose();
@@ -30,8 +31,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = ref.watch(authNotifierProvider);
-    final state = ref.watch(authNotifierProvider).state;
+    final auth = ref.watch(authNotifierProvider.notifier);
+    final state = ref.watch(authNotifierProvider);
+
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(children: [
@@ -59,7 +61,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       buildHeader(),
                       const SizedBox(height: 15),
-                      buildFormLogin(auth, state)
+                      buildFormLogin(auth, state),
                     ],
                   ),
                 ),
