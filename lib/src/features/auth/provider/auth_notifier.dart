@@ -4,7 +4,6 @@ import 'package:lms/src/core/utils/storage.dart';
 import 'package:lms/src/features/auth/data/auth_api.dart';
 import 'package:lms/src/features/injection/injection_provider.dart';
 
-import '../../storage/storage_provider.dart';
 import 'auth_state.dart';
 
 final authNotifierProvider =
