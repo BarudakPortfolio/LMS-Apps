@@ -6,6 +6,7 @@ import 'package:lms/src/features/auth/provider/auth_notifier.dart';
 import 'package:lms/src/features/auth/provider/auth_state.dart';
 import 'package:lms/src/views/components/snackbar_widget.dart';
 
+import '../../core/routes/app_routes.dart';
 import '../../core/style/theme.dart';
 import '../components/form_input.dart';
 
@@ -144,12 +145,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             10,
                           ))),
                       onPressed: () async {
+                        FocusManager.instance.primaryFocus?.unfocus();
                         if (_formKey.currentState!.validate()) {
                           await auth.login(usernameCtrl.text, passCtrl.text);
                           if (state.isAuthenticated) {
                             if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                buildSnackBar("Sukses Login", Colors.green));
+                            Navigator.of(context)
+                                .pushReplacementNamed(AppRoutes.main);
                           }
                         } else {
                           if (!mounted) return;
