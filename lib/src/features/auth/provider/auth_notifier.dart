@@ -36,7 +36,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future loginCheck(ref) async {
     String? token = await ref.read(secureStorage).read('token');
-    if (token!.isNotEmpty) {
+    if (token != null && token.isNotEmpty) {
       state = AuthState.authenticated(token);
     } else {
       state = AuthState.unAuthenticated();
