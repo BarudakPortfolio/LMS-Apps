@@ -18,9 +18,9 @@ class AppRoutes {
   static const detailMateri = '/detail-materi';
 
   static Map<String, Widget Function(BuildContext)> routes = {
-    AppRoutes.login: (context) => const LoginScreen(),
-    AppRoutes.splash: (context) => const SplashScreen(),
-    AppRoutes.main: (context) => const MainScreen(),
-    AppRoutes.profile: (context) => const ProfileScreen(),
+    login: (context) => const LoginScreen(),
+    splash: (context) => const SplashScreen(),
+    main: (context) => const MainScreen(),
+    profile: (context) => const ProfileScreen(),
   };
 }
