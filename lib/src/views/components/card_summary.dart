@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CardSummary extends StatelessWidget {
   CardSummary(this.title, this.value, {super.key});
   String title;
-  String value;
+  int value;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class CardSummary extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(value,
+            Text(value.toString(),
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

@@ -18,7 +18,6 @@ class DashboardApi {
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
-      print(result);
       return Right(result);
     } else {
       return const Left("error when get dashboard data");

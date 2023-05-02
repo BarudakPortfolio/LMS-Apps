@@ -222,6 +222,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               );
             } else {
               if (state.data != null) {
+                int totalMateri = state.data!['materi']['total'];
+                int totalTugas = state.data!['tugas']['not_finished'];
+                int totalAbsensi = state.data!['absensi']['report']['hadir'];
                 return SingleChildScrollView(
                   controller: _scrollController,
                   child: Column(
@@ -263,9 +266,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CardSummary("Materi", "12"),
-                            CardSummary("Tugas", "5"),
-                            CardSummary("Hadir", "10"),
+                            CardSummary("Materi", totalMateri),
+                            CardSummary("Tugas", totalTugas),
+                            CardSummary("Hadir", totalAbsensi),
                           ],
                         ),
                       ),
