@@ -2,7 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
-import 'package:lms/src/features/dashboard/provider/dashboard_state.dart';
+import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 import '../../core/utils/extentions/remove_scroll_grow.dart';
@@ -50,6 +50,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoadingDashboard = ref.watch(dashboardNotifierProvider);
     Size size = MediaQuery.of(context).size;
     final isScrolled = ref.watch(scrollProvider);
     return Scaffold(
@@ -113,23 +114,41 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             );
           }),
         ),
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                FluentIcons.alert_12_regular,
-                color: kGreenPrimary,
-              )),
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: () {},
-              child: const CircleAvatar(
-                backgroundColor: kGreenPrimary,
-              ),
-            ),
-          ),
-        ],
+        actions: isLoadingDashboard.isLoading
+            ? [
+                Shimmer(
+                    child: CircleAvatar(
+                  radius: 10,
+                  backgroundColor: Colors.grey[200],
+                )),
+                Shimmer(
+                    child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: CircleAvatar(
+                    radius: 25,
+                    backgroundColor: Colors.grey[200],
+                  ),
+                ))
+              ]
+            : [
+                IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      FluentIcons.alert_12_regular,
+                      color: kGreenPrimary,
+                    )),
+                Padding(
+                  padding: const EdgeInsets.only(right: 20.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      ref.watch(navProvider.notifier).changeIndex(4);
+                    },
+                    child: const CircleAvatar(
+                      backgroundColor: kGreenPrimary,
+                    ),
+                  ),
+                ),
+              ],
       ),
       body: ScrollConfiguration(
         behavior: RemoveScrollGlow(),
@@ -285,7 +304,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               ),
                             ),
                             trailing: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                ref.watch(navProvider.notifier).changeIndex(1);
+                              },
                               child: const Text("Lihat Semua"),
                             ),
                           ),

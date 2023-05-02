@@ -3,6 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
 
+final scrollProvider = StateNotifierProvider<ScrollNotifier, bool>((ref) {
+  return ScrollNotifier();
+});
+
+class ScrollNotifier extends StateNotifier<bool> {
+  ScrollNotifier() : super(false);
+
+  void changeIsButton(bool newvalue) => state = newvalue;
+}
+
 class MateriScreen extends ConsumerStatefulWidget {
   const MateriScreen({super.key});
 
@@ -11,135 +21,182 @@ class MateriScreen extends ConsumerStatefulWidget {
 }
 
 class _MateriScreenState extends ConsumerState<MateriScreen> {
+  late ScrollController _scrollController;
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+
+    _scrollController.addListener(() {
+      if (_scrollController.offset >
+          _scrollController.position.maxScrollExtent * 0.05) {
+        ref.watch(scrollProvider.notifier).changeIsButton(true);
+      } else {
+        ref.watch(scrollProvider.notifier).changeIsButton(false);
+      }
+    });
+    super.initState();
+  }
+
+  void scrollOnTop() {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _scrollController.removeListener(() {});
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          elevation: 0,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          pinned: true,
-          collapsedHeight: 60,
-          expandedHeight: 150,
-          flexibleSpace: FlexibleSpaceBar(
-            centerTitle: true,
-            collapseMode: CollapseMode.parallax,
-            title: SafeArea(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(FluentIcons.book_24_regular),
-                  SizedBox(width: 10),
-                  Text("Materi",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 16,
-                      )),
-                ],
-              ),
-            ),
-            background: Image.asset(
-              "assets/images/bg_materi.png",
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        SliverPersistentHeader(
+    final isScrolled = ref.watch(scrollProvider);
+    return Scaffold(
+      floatingActionButton: isScrolled
+          ? FloatingActionButton(
+              elevation: 2,
+              backgroundColor: Colors.white,
+              foregroundColor: kGreenPrimary,
+              child: const Icon(Icons.arrow_upward),
+              onPressed: () => scrollOnTop(),
+            )
+          : const SizedBox(),
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverAppBar(
+            elevation: 0,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             pinned: true,
-            delegate: PersistentHeader(
-              widget: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Text("Pilih Mata Kuliah : "),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.all(5),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton(
-                      menuMaxHeight: 250,
-                      borderRadius: BorderRadius.circular(15),
-                      iconEnabledColor: Colors.black,
-                      isExpanded: true,
-                      hint: const Text("Mata Kuliah"),
-                      items: [
-                        "Semua Mata Kuliah",
-                        "Pemrograman Mobile",
-                        "Matematika Diskrit"
-                      ]
-                          .map((kelas) => DropdownMenuItem<String>(
-                                value: kelas,
-                                child: Text(kelas),
-                              ))
-                          .toList(),
-                      onChanged: (value) {},
-                    )),
-                  ),
-                ],
-              ),
-            )),
-        SliverList(
-          delegate: SliverChildListDelegate([
-            Column(
-              children: List.generate(
-                20,
-                (index) => Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: const Text("Nama Judul Materi",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            )),
-                        subtitle: const Text(
-                          "Deskripsi materi kali ini adalah baca sampai dengan selesai yaa",
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: Column(
-                          children: const [
-                            Text("Selasa", style: TextStyle(fontSize: 12)),
-                            Text("27 Apr 2023", style: TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: kGreenPrimary,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Text(
-                            "Nama dosen nya gaes",
-                            style: TextStyle(fontSize: 12, color: Colors.white),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+            collapsedHeight: 60,
+            expandedHeight: 150,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              collapseMode: CollapseMode.parallax,
+              title: SafeArea(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(FluentIcons.book_24_regular),
+                    SizedBox(width: 10),
+                    Text("Materi",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16,
+                        )),
+                  ],
                 ),
               ),
-            )
-          ]),
-        ),
-      ],
+              background: Image.asset(
+                "assets/images/bg_materi.jpg",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SliverPersistentHeader(
+              pinned: true,
+              delegate: PersistentHeader(
+                widget: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text("Pilih Mata Kuliah : "),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.all(5),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                          child: DropdownButton(
+                        menuMaxHeight: 250,
+                        borderRadius: BorderRadius.circular(15),
+                        iconEnabledColor: Colors.black,
+                        isExpanded: true,
+                        hint: const Text("Mata Kuliah"),
+                        items: [
+                          "Semua Mata Kuliah",
+                          "Pemrograman Mobile",
+                          "Matematika Diskrit"
+                        ]
+                            .map((kelas) => DropdownMenuItem<String>(
+                                  value: kelas,
+                                  child: Text(kelas),
+                                ))
+                            .toList(),
+                        onChanged: (value) {},
+                      )),
+                    ),
+                  ],
+                ),
+              )),
+          SliverList(
+            delegate: SliverChildListDelegate([
+              Column(
+                children: List.generate(
+                  20,
+                  (index) => Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: const Text("Nama Judul Materi",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: const Text(
+                            "Deskripsi materi kali ini adalah baca sampai dengan selesai yaa",
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: Column(
+                            children: const [
+                              Text("Selasa", style: TextStyle(fontSize: 12)),
+                              Text("27 Apr 2023",
+                                  style: TextStyle(fontSize: 12)),
+                            ],
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: kGreenPrimary,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              "Nama dosen nya gaes",
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.white),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ]),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -22,7 +22,6 @@ class AuthApi {
       url,
       body: body,
     );
-    print(response.body);
 
     final result = json.decode(response.body);
     if (response.statusCode == 200) {
