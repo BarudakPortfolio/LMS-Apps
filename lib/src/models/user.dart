@@ -35,7 +35,7 @@ class UserModel {
     this.tahunMasuk,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromJson(Map<dynamic, dynamic> json) {
     return UserModel(
       idUser: json['user_id'],
       name: json['nama'],

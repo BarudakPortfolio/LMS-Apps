@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CardSummary extends StatelessWidget {
-  CardSummary(this.title, this.value, {super.key});
-  String title;
-  int value;
+  const CardSummary(this.title, this.value, {super.key});
+  final String title;
+  final int value;
 
   @override
   Widget build(BuildContext context) {

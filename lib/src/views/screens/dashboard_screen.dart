@@ -6,7 +6,9 @@ import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 import '../../core/utils/extentions/remove_scroll_grow.dart';
-import '../../features/dashboard/provider/dashboard_notifier.dart';
+import '../../features/dashboard/provider/dashboard_provider.dart';
+import '../../features/user/provider/user_provider.dart';
+import '../../models/user.dart';
 import '../components/card_class.dart';
 import '../components/card_summary.dart';
 
@@ -33,8 +35,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   void initState() {
     Future.microtask(() {
-      final dashboardApi = ref.watch(dashboardNotifierProvider.notifier);
-      dashboardApi.getDashboardData();
+      ref.watch(dashboardNotifierProvider.notifier).getDashboardData();
+      ref.watch(userNotifierProvider.notifier).getUser();
     });
     _scrollController = ScrollController(initialScrollOffset: 0);
     _scrollController.addListener(() {
@@ -50,7 +52,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoadingDashboard = ref.watch(dashboardNotifierProvider);
+    final dashboard = ref.watch(dashboardNotifierProvider);
+    final user = ref.watch(userNotifierProvider);
     Size size = MediaQuery.of(context).size;
     final isScrolled = ref.watch(scrollProvider);
     return Scaffold(
@@ -65,7 +68,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           padding: const EdgeInsets.only(left: 20),
           child: Consumer(builder: (context, watch, child) {
             final dashboardApi = watch.watch(dashboardNotifierProvider);
-            if (dashboardApi.isLoading) {
+            final userApi = watch.watch(userNotifierProvider);
+            if (dashboardApi.isLoading && userApi.isLoading) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,6 +84,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 10),
                   Shimmer(
                     child: Container(
                       height: 10,
@@ -97,15 +102,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Novan Noviansyah Pratama',
-                  style: TextStyle(
+                Text(
+                  userApi.user?.name ?? 'No Name',
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
                 Text(
-                  '1906038',
+                  userApi.user!.nim ?? '0000000',
                   style: TextStyle(
                     color: Colors.grey.shade500,
                   ),
@@ -114,7 +119,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             );
           }),
         ),
-        actions: isLoadingDashboard.isLoading
+        actions: dashboard.isLoading && user.isLoading
             ? [
                 Shimmer(
                     child: CircleAvatar(
@@ -131,23 +136,25 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ))
               ]
             : [
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      FluentIcons.alert_12_regular,
-                      color: kGreenPrimary,
-                    )),
-                Padding(
-                  padding: const EdgeInsets.only(right: 20.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      ref.watch(navProvider.notifier).changeIndex(4);
-                    },
-                    child: const CircleAvatar(
-                      backgroundColor: kGreenPrimary,
+                Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          FluentIcons.alert_12_regular,
+                          color: kGreenPrimary,
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          ref.watch(navProvider.notifier).changeIndex(4);
+                        },
+                        child: avatarBuilder(user.user),
+                      ),
                     ),
-                  ),
-                ),
+                  ],
+                )
               ],
       ),
       body: ScrollConfiguration(
@@ -160,30 +167,33 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 child: Column(
                   children: [
                     Shimmer(
-                        child: Container(
-                      margin: const EdgeInsets.all(20),
-                      width: double.infinity,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey.shade300,
+                      child: Container(
+                        margin: const EdgeInsets.all(20),
+                        width: double.infinity,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey.shade300,
+                        ),
                       ),
-                    )),
+                    ),
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: List.generate(
-                            3,
-                            (index) => Shimmer(
-                                    child: Container(
-                                  height: 100,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.grey.shade300,
-                                  ),
-                                ))),
+                          3,
+                          (index) => Shimmer(
+                            child: Container(
+                              height: 100,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     Column(
@@ -342,5 +352,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
       ),
     );
+  }
+
+  Widget avatarBuilder(UserModel? user) {
+    if (user?.avatar == null) {
+      return const CircleAvatar(
+        backgroundColor: kGreenPrimary,
+        child: Icon(
+          FluentIcons.person_20_regular,
+          color: Colors.white,
+        ),
+      );
+    } else {
+      return CircleAvatar(
+        backgroundImage: NetworkImage(
+          'https://elearning.itg.ac.id/upload/avatar/${user!.avatar}',
+        ),
+      );
+    }
   }
 }

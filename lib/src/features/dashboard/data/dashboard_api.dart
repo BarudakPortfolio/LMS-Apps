@@ -1,10 +1,16 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/common/constants.dart';
-import '../../../core/utils/storage.dart';
+import '../../storage/provider/storage_provider.dart';
+import '../../storage/service/storage.dart';
 import 'package:http/http.dart' as http;
+
+final dashboardApiProvider = Provider<DashboardApi>((ref) {
+  return DashboardApi(ref.watch(storageProvider));
+});
 
 class DashboardApi {
   DashboardApi(this.secureStorage);

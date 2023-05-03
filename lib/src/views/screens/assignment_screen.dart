@@ -252,7 +252,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Row(
-                            children: [
+                            children: const [
                               BannerGrade("Dinilai", Colors.green),
                               BannerGrade("Pesan", Colors.yellow),
                               BannerGrade("Belum dinilai", Colors.grey),
@@ -273,14 +273,14 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
 }
 
 class BannerGrade extends StatelessWidget {
-  BannerGrade(
+  const BannerGrade(
     this.text,
     this.color, {
     super.key,
   });
 
-  String text;
-  Color color;
+  final String text;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
