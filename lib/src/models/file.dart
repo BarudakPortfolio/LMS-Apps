@@ -1,4 +1,4 @@
-class File {
+class FileModel {
   int? id;
   String? materiId;
   String? tipeFile;
@@ -8,7 +8,7 @@ class File {
   String? createdAt;
   String? updatedAt;
 
-  File(
+  FileModel(
       {this.id,
       this.materiId,
       this.tipeFile,
@@ -18,7 +18,7 @@ class File {
       this.createdAt,
       this.updatedAt});
 
-  File.fromJson(Map<String, dynamic> json) {
+  FileModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     materiId = json['materi_id'];
     tipeFile = json['tipe_file'];

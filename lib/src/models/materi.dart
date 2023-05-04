@@ -19,7 +19,7 @@ class Materi {
   String? foto;
   String? createdAt;
   String? updatedAt;
-  List<File>? file;
+  List<FileModel>? file;
   KelasMapel? kelasMapel;
   Mapel? mapel;
   Foto? fotoAuth;
@@ -63,9 +63,9 @@ class Materi {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     if (json['file'] != null) {
-      file = <File>[];
+      file = <FileModel>[];
       json['file'].forEach((v) {
-        file!.add(File.fromJson(v));
+        file!.add(FileModel.fromJson(v));
       });
     }
     kelasMapel = json['kelas_mapel'] != null

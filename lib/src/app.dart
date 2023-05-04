@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lms/src/views/screens/materi_detail_screen.dart';
 
 import 'core/routes/app_routes.dart';
 import 'core/style/theme.dart';
@@ -15,6 +16,16 @@ class MainApp extends ConsumerWidget {
       routes: AppRoutes.routes,
       initialRoute: AppRoutes.splash,
       theme: lightTheme,
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case AppRoutes.detailMateri:
+            return MaterialPageRoute(builder: (context) {
+              final id = settings.arguments as int;
+              return MateriDetailScreen(id: id);
+            });
+          default:
+        }
+      },
     );
   }
 }

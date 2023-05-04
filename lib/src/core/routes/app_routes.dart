@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lms/src/views/screens/assignment_screen.dart';
 import 'package:lms/src/views/screens/login_screen.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
+import 'package:lms/src/views/screens/materi_detail_screen.dart';
+import 'package:lms/src/views/screens/materi_screen.dart';
 import 'package:lms/src/views/screens/profile_screen.dart';
 import 'package:lms/src/views/screens/splash_screen.dart';
 
@@ -21,5 +24,7 @@ class AppRoutes {
     splash: (context) => const SplashScreen(),
     main: (context) => const MainScreen(),
     profile: (context) => const ProfileScreen(),
+    materi: (context) => const MateriScreen(),
+    tugas: (context) => const AssignmentScreen(),
   };
 }
