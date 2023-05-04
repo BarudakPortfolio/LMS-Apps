@@ -176,8 +176,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         width: 1,
                                       ),
                                       Column(
-                                        children: const [
-                                          Text(
+                                        children: [
+                                          const Text(
                                             'KELAS',
                                             style: TextStyle(
                                               fontSize: 12,
@@ -185,10 +185,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          SizedBox(height: 10),
+                                          const SizedBox(height: 10),
                                           Text(
-                                            'IF-2020-D',
-                                            style: TextStyle(
+                                            user.user!.kelas ?? '-',
+                                            style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 14),
                                           )
