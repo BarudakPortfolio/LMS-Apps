@@ -13,6 +13,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       : super(AuthState.unAuthenticated());
 
   Future login(String username, String password) async {
+    state = AuthState.loading();
     final token = await authApi.login(username: username, password: password);
     token.fold((l) {
       state = AuthState.unAuthenticated();
@@ -26,5 +27,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   logout() async {
     await storage.deleteAll();
+    state = AuthState.unAuthenticated();
   }
 }

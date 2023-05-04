@@ -38,37 +38,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(children: [
-        ListView(
-          children: [
-            Container(
-              height: size.height,
-              width: size.width,
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                image: AssetImage(
-                  "assets/images/bg.png",
-                ),
-                fit: BoxFit.cover,
-              )),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildHeader(),
-                      const SizedBox(height: 15),
-                      buildFormLogin(auth, state),
-                    ],
-                  ),
-                ),
+        Container(
+          height: size.height,
+          width: size.width,
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage(
+              "assets/images/bg.png",
+            ),
+            fit: BoxFit.cover,
+          )),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+            child: Container(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 40,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildHeader(),
+                  const SizedBox(height: 15),
+                  buildFormLogin(auth, state),
+                ],
               ),
             ),
-          ],
+          ),
         )
       ]),
     );
@@ -91,6 +87,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Card buildFormLogin(AuthNotifier auth, AuthState state) {
+    loginHandle() async {
+      FocusManager.instance.primaryFocus?.unfocus();
+      if (_formKey.currentState!.validate()) {
+        await auth.login(usernameCtrl.text, passCtrl.text);
+        if (state.isAuthenticated) {
+          if (!mounted) return;
+          Navigator.of(context).pushReplacementNamed(AppRoutes.main);
+        } else {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(buildSnackBar("Gagal Login", Colors.red));
+        }
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(buildSnackBar("Gagal Login", Colors.red));
+      }
+    }
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 5,
@@ -139,31 +154,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(15),
-                          backgroundColor: kGreenPrimary,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                            10,
-                          ))),
-                      onPressed: () async {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        if (_formKey.currentState!.validate()) {
-                          await auth.login(usernameCtrl.text, passCtrl.text);
-                          if (state.isAuthenticated) {
-                            if (!mounted) return;
-                            Navigator.of(context)
-                                .pushReplacementNamed(AppRoutes.main);
+                    Consumer(builder: (context, watch, child) {
+                      return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(15),
+                            backgroundColor: kGreenPrimary,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                              10,
+                            ))),
+                        onPressed: loginHandle,
+                        child: Consumer(builder: (context, watch, child) {
+                          final isLoading =
+                              watch.watch(authNotifierProvider).isLoading;
+                          if (isLoading) {
+                            return const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            );
                           }
-                        } else {
-                          if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              buildSnackBar("Gagal Login", Colors.red));
-                        }
-                      },
-                      child: const Text("Masuk"),
-                    )
+                          return const Text("Masuk");
+                        }),
+                      );
+                    })
                   ]),
             ),
           ),

@@ -2,6 +2,12 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
+import 'package:lms/src/core/utils/extentions/format_date.dart';
+import 'package:lms/src/core/utils/extentions/nama_dosen.dart';
+import 'package:lms/src/core/utils/extentions/remove_scroll_grow.dart';
+import 'package:lms/src/features/materi/provider/materi_provider.dart';
+
+import '../../models/materi.dart';
 
 final scrollProvider = StateNotifierProvider<ScrollNotifier, bool>((ref) {
   return ScrollNotifier();
@@ -55,6 +61,8 @@ class _MateriScreenState extends ConsumerState<MateriScreen> {
   @override
   Widget build(BuildContext context) {
     final isScrolled = ref.watch(scrollProvider);
+    final materiApi = ref.watch(materiNotifierProvider.notifier);
+    final materiState = ref.watch(materiNotifierProvider);
     return Scaffold(
       floatingActionButton: isScrolled
           ? FloatingActionButton(
@@ -67,6 +75,7 @@ class _MateriScreenState extends ConsumerState<MateriScreen> {
           : const SizedBox(),
       body: CustomScrollView(
         controller: _scrollController,
+        scrollBehavior: RemoveScrollGlow(),
         slivers: [
           SliverAppBar(
             elevation: 0,
@@ -141,59 +150,104 @@ class _MateriScreenState extends ConsumerState<MateriScreen> {
               )),
           SliverList(
             delegate: SliverChildListDelegate([
-              Column(
-                children: List.generate(
-                  20,
-                  (index) => Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15)),
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: const Text("Nama Judul Materi",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              )),
-                          subtitle: const Text(
-                            "Deskripsi materi kali ini adalah baca sampai dengan selesai yaa",
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          trailing: Column(
-                            children: const [
-                              Text("Selasa", style: TextStyle(fontSize: 12)),
-                              Text("27 Apr 2023",
-                                  style: TextStyle(fontSize: 12)),
-                            ],
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: kGreenPrimary,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Text(
-                              "Nama dosen nya gaes",
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+              Builder(
+                builder: (context) {
+                  if (materiState.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return Column(
+                      children: materiState.data!
+                          .map((e) => CardMateri(materi: e))
+                          .toList(),
+                    );
+                  }
+                },
               )
             ]),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CardMateri extends StatelessWidget {
+  final Materi materi;
+
+  const CardMateri({super.key, required this.materi});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(right: 20, left: 20, bottom: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('${materi.judul}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        )),
+                    Text('${materi.mapel!.nama}',
+                        style: TextStyle(color: Colors.grey[400])),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: kGreenPrimary,
+                ),
+                child: Text(
+                  'Pertemuan ${materi.pertemuanKe!}',
+                  style: const TextStyle(fontSize: 10, color: Colors.white),
+                ),
+              )
+            ],
+          ),
+          const Divider(),
+          Row(
+            children: [
+              const Icon(FluentIcons.person_16_regular),
+              Text(
+                namaDosen(materi.kelasMapel!.guru!),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.right,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(FluentIcons.calendar_clock_20_regular),
+                  const SizedBox(width: 3),
+                  Text("${formatDate(materi.createdAt!)}",
+                      style: const TextStyle(fontSize: 12)),
+                ],
+              ),
+              Text("File : ${materi.file?.length}"),
+            ],
           ),
         ],
       ),

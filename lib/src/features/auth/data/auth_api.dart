@@ -25,8 +25,9 @@ class AuthApi {
       url,
       body: body,
     );
-
-    if (response.statusCode == 200) {
+    print(response.body);
+    final isUser = (jsonDecode(response.body)['status']) == 1;
+    if (isUser) {
       final result = json.decode(response.body);
       return Right(result['token']);
     } else {

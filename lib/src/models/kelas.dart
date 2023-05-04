@@ -25,11 +25,7 @@ class Kelas {
     return Kelas(
       id: json['kelas_mapel']['mapel']['id'].toString(),
       nama: json['kelas_mapel']['mapel']['nama'],
-      namaGuru: namaDosen(
-        json['kelas_mapel']['guru']['nama'],
-        json['kelas_mapel']['guru']['gelar_depan'],
-        json['kelas_mapel']['guru']['gelar_belakang'],
-      ),
+      namaGuru: namaDosen(json['kelas_mapel']['guru']),
       avatar: json['kelas_mapel']['guru']['avatar'],
       hari: json['hari'],
       waktuMulai: json['jam_mulai'],

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lms/src/features/materi/provider/materi_provider.dart';
 import 'package:lms/src/views/screens/materi_screen.dart';
 import 'package:lms/src/views/screens/profile_screen.dart';
 
+import '../../features/dashboard/provider/dashboard_provider.dart';
+import '../../features/user/provider/user_provider.dart';
 import 'assignment_screen.dart';
 import 'class_screen.dart';
 import 'dashboard_screen.dart';
@@ -18,11 +21,26 @@ class NavProvider extends StateNotifier<int> {
   void changeIndex(newIndex) => state = newIndex;
 }
 
-class MainScreen extends ConsumerWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends ConsumerState<MainScreen> {
+  @override
+  void initState() {
+    Future.microtask(() {
+      ref.watch(dashboardNotifierProvider.notifier).getDashboardData();
+      ref.watch(userNotifierProvider.notifier).getUser();
+      ref.watch(materiNotifierProvider.notifier).getMateri();
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final index = ref.watch(navProvider);
     return Scaffold(
         bottomNavigationBar: BottomNavigationBar(

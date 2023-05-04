@@ -34,10 +34,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   void initState() {
-    Future.microtask(() {
-      ref.watch(dashboardNotifierProvider.notifier).getDashboardData();
-      ref.watch(userNotifierProvider.notifier).getUser();
-    });
     _scrollController = ScrollController(initialScrollOffset: 0);
     _scrollController.addListener(() {
       if (_scrollController.offset > 0) {
@@ -110,7 +106,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                 ),
                 Text(
-                  userApi.user!.nim ?? '0000000',
+                  userApi.user?.nim ?? '0000000',
                   style: TextStyle(
                     color: Colors.grey.shade500,
                   ),
@@ -295,9 +291,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CardSummary("Materi", totalMateri),
-                            CardSummary("Tugas", totalTugas),
-                            CardSummary("Hadir", totalAbsensi),
+                            CardSummary(
+                              "Materi",
+                              totalMateri,
+                              onTap: () {
+                                ref.watch(navProvider.notifier).changeIndex(2);
+                              },
+                            ),
+                            CardSummary(
+                              "Tugas",
+                              totalTugas,
+                              onTap: () {
+                                ref.watch(navProvider.notifier).changeIndex(3);
+                              },
+                            ),
+                            CardSummary(
+                              "Hadir",
+                              totalAbsensi,
+                              onTap: () {
+                                ref.watch(navProvider.notifier).changeIndex(0);
+                              },
+                            ),
                           ],
                         ),
                       ),
