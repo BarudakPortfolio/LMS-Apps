@@ -155,11 +155,17 @@ class _MateriScreenState extends ConsumerState<MateriScreen> {
                   if (materiState.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else {
-                    return Column(
-                      children: materiState.data!
-                          .map((e) => CardMateri(materi: e))
-                          .toList(),
-                    );
+                    if (materiState.data != null) {
+                      final data = materiState.data;
+                      return Column(
+                        children:
+                            data!.map((e) => CardMateri(materi: e)).toList(),
+                      );
+                    } else {
+                      return const Center(
+                        child: Text('Materi tidak ada'),
+                      );
+                    }
                   }
                 },
               )
