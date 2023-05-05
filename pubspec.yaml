@@ -16,6 +16,7 @@ dependencies:
   flutter_riverpod: ^2.3.6
   flutter_screenutil: ^5.7.0
   flutter_secure_storage: ^8.0.0
+  flutter_svg: ^2.0.5
   flutter_widget_from_html: ^0.10.0
   get_it: ^7.3.0
   http: ^0.13.5
@@ -27,6 +28,7 @@ dependencies:
   time_planner: ^0.1.1
   url_launcher: ^6.1.10
   uuid: ^3.0.7
+  vector_math: ^2.1.4
 
 dev_dependencies:
   flutter_test:
