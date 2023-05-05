@@ -2,6 +2,9 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
+import 'package:lms/src/core/utils/extentions/check_status_tugas.dart';
+import 'package:lms/src/core/utils/extentions/format_date.dart';
+import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 
 final scrollProvider = StateNotifierProvider<ScrollNotifier, bool>((ref) {
   return ScrollNotifier();
@@ -25,8 +28,10 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   late ScrollController _scrollController;
   @override
   void initState() {
+    Future.microtask(() {
+      ref.watch(assigmentNotifierProvider.notifier).getAssigment();
+    });
     _scrollController = ScrollController();
-
     _scrollController.addListener(() {
       if (_scrollController.offset >
           _scrollController.position.maxScrollExtent * 0.05) {
@@ -56,6 +61,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   @override
   Widget build(BuildContext context) {
     final isScrolled = ref.watch(scrollProvider);
+    final assigmentList = ref.watch(assigmentNotifierProvider).data;
     return Scaffold(
       floatingActionButton: isScrolled
           ? FloatingActionButton(
@@ -178,92 +184,78 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
               )),
           SliverList(
             delegate: SliverChildListDelegate([
-              Column(
-                children: List.generate(
-                  20,
-                  (index) => Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: ListTile(
-                                title: Text("Nama Kelas",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    )),
-                                subtitle: Text(
-                                  "Nama Judul Tugas",
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+              assigmentList!.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: kGreenPrimary,
+                      ),
+                    )
+                  : Column(
+                      children: assigmentList
+                          .map(
+                            (assigment) => Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 20),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ListTile(
+                                          title: Text(
+                                              "${assigment.kelasMapel?.nama}",
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              )),
+                                          subtitle: Text(
+                                            "${assigment.detail?.judul}",
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                      Column(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Text(formatDate(
+                                                  assigment.createdAt!)),
+                                              const SizedBox(height: 10),
+                                              getAssigmentStatus(assigment)
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Row(
+                                      children: [
+                                        if (assigment.isDone == 'y')
+                                          const BannerGrade(
+                                              "Dinilai", Colors.green),
+                                        if (assigment.pesan!.isNotEmpty)
+                                          const BannerGrade(
+                                              "Pesan", Colors.yellow),
+                                        if (assigment.isDone == 'n')
+                                          const BannerGrade(
+                                              "Belum dinilai", Colors.grey),
+                                      ],
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                            Column(
-                              children: [
-                                Column(
-                                  children: [
-                                    const Text("Selasa",
-                                        style: TextStyle(fontSize: 12)),
-                                    const Text("27 Apr 2023",
-                                        style: TextStyle(fontSize: 12)),
-                                    const SizedBox(height: 10),
-
-                                    ///[icon done]
-                                    // CircleAvatar(
-                                    //   radius: 12,
-                                    //   backgroundColor: Colors.green[400],
-                                    //   child: const Icon(Icons.done,
-                                    //       color: Colors.white),
-                                    // ),
-                                    ///[icon not send assigment]
-                                    CircleAvatar(
-                                      radius: 12,
-                                      backgroundColor: Colors.red[400],
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-
-                                    ///[icon late send assigment]
-                                    // CircleAvatar(
-                                    //   radius: 12,
-                                    //   backgroundColor: Colors.yellow[400],
-                                    //   child: Icon(
-                                    //     Icons.watch_later_outlined,
-                                    //     color: Colors.grey[500],
-                                    //   ),
-                                    // ),
-                                  ],
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: const [
-                              BannerGrade("Dinilai", Colors.green),
-                              BannerGrade("Pesan", Colors.yellow),
-                              BannerGrade("Belum dinilai", Colors.grey),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              )
+                          )
+                          .toList())
             ]),
           ),
         ],
