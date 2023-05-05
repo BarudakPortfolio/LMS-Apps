@@ -55,4 +55,20 @@ class UserModel {
       tahunMasuk: json['tahun_masuk'],
     );
   }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = idUser;
+    data['nim'] = nim;
+    data['nama'] = name;
+    data['jurusan'] = prodi;
+    data['email'] = email;
+    data['jenis_kelamin'] = jenisKelamin;
+    data['agama'] = agama;
+    data['tempat_lahir'] = tempatLahir;
+    data['tanggal_lahir'] = tanggalLahir;
+    data['alamat'] = alamat;
+    data['tahun_masuk'] = tahunMasuk;
+    data['kelas'] = kelas;
+    return data;
+  }
 }

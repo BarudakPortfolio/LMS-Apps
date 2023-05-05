@@ -18,23 +18,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void initState() {
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            // Update loading bar.
-          },
-          onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
-          onWebResourceError: (WebResourceError error) {},
-          onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              return NavigationDecision.prevent;
-            }
-            return NavigationDecision.navigate;
-          },
-        ),
-      )
+      ..setBackgroundColor(Colors.white)
       ..loadRequest(Uri.parse(widget.url));
     super.initState();
   }
@@ -55,14 +39,23 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   items: [
                     PopupMenuItem(
                       onTap: () async {
-                        await launchUrl(Uri.parse(widget.url));
+                        await launchUrl(Uri.parse(widget.url),
+                            mode: LaunchMode.externalApplication);
                       },
                       child: const Text('Buka di Browser'),
                     ),
                     PopupMenuItem(
                         onTap: () async {
                           await Clipboard.setData(
-                              ClipboardData(text: widget.url));
+                                  ClipboardData(text: widget.url))
+                              .then((value) {
+                            // if (mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Tautan Berhasil di salin"),
+                              ),
+                            );
+                          });
                         },
                         child: const Text("Salin Tautan"))
                   ],

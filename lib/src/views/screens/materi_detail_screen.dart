@@ -7,9 +7,7 @@ import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/features/materi/data/materi_api.dart';
 import 'package:lms/src/views/components/webview.dart';
-import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:open_file/open_file.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/materi/provider/materi_detail/materi_detail_provider.dart';
 
