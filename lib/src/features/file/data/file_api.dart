@@ -15,19 +15,4 @@ final fileProvider = Provider<FileApi>((ref) {
 class FileApi {
   final IOClient client;
   FileApi(this.client);
-
-  Future getFileFromUrl(FileModel document) async {
-    Uri url = Uri.parse(
-        "https://elearning.itg.ac.id/upload/materi/${document.namaFile}");
-
-    final response = await client.get(url);
-    final bytes = response.bodyBytes;
-    Directory dir = await getApplicationDocumentsDirectory();
-    List<String> urlName = (url.toString()).split("/");
-    String name = urlName[urlName.length - 1];
-    File file = File("${dir.path}/$name");
-    File urlFile = await file.writeAsBytes(bytes);
-    print(urlFile);
-    await OpenFile.open(urlFile.path);
-  }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,9 @@ import 'package:lms/src/features/http/provider/http_provider.dart';
 import 'package:lms/src/features/storage/provider/storage_provider.dart';
 import 'package:lms/src/features/storage/service/storage.dart';
 import 'package:lms/src/models/materi.dart';
+import 'package:path_provider/path_provider.dart';
+
+import '../../../models/file.dart';
 
 final materiApiProvider = Provider<MateriApi>((ref) {
   return MateriApi(
@@ -46,6 +50,23 @@ class MateriApi {
       return Right(materi);
     } else {
       return const Left("Tidak ada Materi");
+    }
+  }
+
+  Future getFileFromUrl(FileModel document) async {
+    Uri url = Uri.parse(
+      "https://elearning.itg.ac.id/upload/materi/${document.namaFile}",
+    );
+    final response = await client.get(url);
+
+    if (response.statusCode == 200) {
+      final bytesBody = response.bodyBytes;
+      final dir = await getApplicationDocumentsDirectory();
+      String nameFile = document.namaFile!;
+      File filePath = File("${dir.path}/$nameFile");
+
+      File fileAsPath = await filePath.writeAsBytes(bytesBody);
+      return fileAsPath.path;
     }
   }
 }

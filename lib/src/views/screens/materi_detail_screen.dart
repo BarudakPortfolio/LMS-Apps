@@ -1,11 +1,11 @@
-import 'package:dartz/dartz.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
-import 'package:lms/src/features/file/data/file_api.dart';
+import 'package:lms/src/features/materi/data/materi_api.dart';
+import 'package:open_file/open_file.dart';
 
 import '../../features/materi/provider/materi_detail/materi_detail_provider.dart';
 
@@ -127,7 +127,10 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: ListTile(
                                 onTap: () async {
-                                  ref.watch(fileProvider).getFileFromUrl(file);
+                                  final filePath = await ref
+                                      .watch(materiApiProvider)
+                                      .getFileFromUrl(file);
+                                  OpenFile.open(filePath, type: file.tipeFile);
                                 },
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
