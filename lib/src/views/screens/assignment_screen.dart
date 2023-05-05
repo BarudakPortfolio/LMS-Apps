@@ -26,6 +26,12 @@ class AssignmentScreen extends ConsumerStatefulWidget {
 
 class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   late ScrollController _scrollController;
+  Map<String, String> statusAssigment = {
+    "Semua status": "all",
+    "Belum selesai": "n",
+    "Selesai": "y",
+  };
+
   @override
   void initState() {
     Future.microtask(() {
@@ -62,6 +68,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   Widget build(BuildContext context) {
     final isScrolled = ref.watch(scrollProvider);
     final assigmentList = ref.watch(assigmentNotifierProvider).data;
+
     return Scaffold(
       floatingActionButton: isScrolled
           ? FloatingActionButton(
@@ -170,13 +177,15 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                         iconEnabledColor: Colors.black,
                         isExpanded: true,
                         hint: const Text("Status Tugas"),
-                        items: ["Semua status", "Belum selesai", "Selesai"]
+                        items: statusAssigment.entries
                             .map((status) => DropdownMenuItem<String>(
-                                  value: status,
-                                  child: Text(status),
+                                  value: status.value,
+                                  child: Text(status.key),
                                 ))
                             .toList(),
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          print(value);
+                        },
                       )),
                     ),
                   ],
@@ -184,7 +193,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
               )),
           SliverList(
             delegate: SliverChildListDelegate([
-              assigmentList!.isEmpty
+              assigmentList == null
                   ? const Center(
                       child: CircularProgressIndicator(
                         color: kGreenPrimary,
@@ -206,9 +215,10 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                                   Row(
                                     children: [
                                       Expanded(
+                                        flex: 3,
                                         child: ListTile(
                                           title: Text(
-                                              "${assigment.kelasMapel?.nama}",
+                                              "${assigment.detail?.mapel?.nama}",
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -220,17 +230,24 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                                           ),
                                         ),
                                       ),
-                                      Column(
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Text(formatDate(
-                                                  assigment.createdAt!)),
-                                              const SizedBox(height: 10),
-                                              getAssigmentStatus(assigment)
-                                            ],
-                                          ),
-                                        ],
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(
+                                                    formatDateToNumber(
+                                                        assigment.createdAt!),
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    )),
+                                                const SizedBox(height: 10),
+                                                getAssigmentStatus(assigment)
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       )
                                     ],
                                   ),
@@ -242,7 +259,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                                         if (assigment.isDone == 'y')
                                           const BannerGrade(
                                               "Dinilai", Colors.green),
-                                        if (assigment.pesan!.isNotEmpty)
+                                        if (assigment.pesan != null)
                                           const BannerGrade(
                                               "Pesan", Colors.yellow),
                                         if (assigment.isDone == 'n')

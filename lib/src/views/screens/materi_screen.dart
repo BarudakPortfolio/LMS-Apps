@@ -216,7 +216,7 @@ class CardMateri extends StatelessWidget {
                             fontSize: 16,
                           )),
                       Text('${materi.mapel!.nama}',
-                          style: TextStyle(color: Colors.grey[400])),
+                          style: TextStyle(color: Colors.grey[500])),
                     ],
                   ),
                 ),

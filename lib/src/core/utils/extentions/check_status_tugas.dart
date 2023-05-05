@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../models/tugas.dart';
 
 Widget getAssigmentStatus(Tugas assignment) {
-  if (assignment.tanggalUpload != null) {
+  if (assignment.isDone == 'y') {
     DateTime deadline = DateTime.parse(assignment.detail!.tanggalPengumpulan!);
-    DateTime userUpload = DateTime.parse(assignment.tanggalUpload!);
+    DateTime? userUpload = DateTime.parse(assignment.tanggalUpload!);
 
-    if (deadline.isAfter(userUpload)) {
+    if (userUpload.isAfter(deadline)) {
       return CircleAvatar(
         radius: 12,
         backgroundColor: Colors.yellow[400],
@@ -17,7 +17,6 @@ Widget getAssigmentStatus(Tugas assignment) {
         ),
       );
     }
-  } else if (assignment.isDone == "n") {
     return CircleAvatar(
       radius: 12,
       backgroundColor: Colors.green[400],

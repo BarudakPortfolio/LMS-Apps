@@ -15,12 +15,18 @@ class AssigmentApi {
   final IOClient client;
   AssigmentApi({required this.client});
 
-  Future<Either<String, List<Tugas>>> getAssigment(String token) async {
-    Uri url = Uri.parse("$BASE_URL/student_area/tugas");
+  Future<Either<String, List<Tugas>>> getAssigment(String token,
+      {String? mapelId, String? isDone}) async {
+    mapelId ??= "all";
+    isDone ??= "all";
+    Uri url = Uri.parse(
+      "$BASE_URL/student_area/tugas?mapel_id=$mapelId&is_done=$isDone",
+    );
 
     final response = await client.get(url, headers: {
       "Authorization": "Bearer $token",
     });
+    print(response.body);
 
     if (response.statusCode == 200) {
       List result = jsonDecode(response.body)['data'];
