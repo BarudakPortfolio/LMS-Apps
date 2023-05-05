@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lms/src/models/user.dart';
 import 'package:lms/src/views/screens/materi_screen.dart';
 import 'package:lms/src/views/screens/profile_screen.dart';
 
@@ -36,6 +37,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     Future.microtask(() {
+      UserModel? user = ref.watch(userNotifierProvider).user;
       ref.watch(dashboardNotifierProvider.notifier).getDashboardData();
       ref.watch(userNotifierProvider.notifier).getUser();
       ref.watch(materiNotifierProvider.notifier).getMateri();

@@ -88,7 +88,9 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
       ),
       body: materi.data == null
           ? const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: kGreenPrimary,
+              ),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),

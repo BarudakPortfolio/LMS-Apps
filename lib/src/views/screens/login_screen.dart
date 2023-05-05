@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/features/auth/provider/auth_notifier.dart';
 import 'package:lms/src/features/auth/provider/auth_state.dart';
+import 'package:lms/src/features/collect_user/data/collect_user_api.dart';
+import 'package:lms/src/features/user/provider/user_notifier.dart';
+import 'package:lms/src/features/user/provider/user_provider.dart';
+import 'package:lms/src/features/user/provider/user_state.dart';
 import 'package:lms/src/views/components/snackbar_widget.dart';
 
 import '../../core/routes/app_routes.dart';
 import '../../core/style/theme.dart';
 import '../../features/auth/provider/auth_provider.dart';
+import '../../models/user.dart';
 import '../components/form_input.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -34,7 +39,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = ref.watch(authNotifierProvider.notifier);
     final state = ref.watch(authNotifierProvider);
-
+    final userNotifier = ref.watch(userNotifierProvider.notifier);
+    final user = ref.watch(userNotifierProvider);
+    final collectData = ref.watch(collectdataProvider);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(children: [
@@ -60,7 +67,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 children: [
                   buildHeader(),
                   const SizedBox(height: 15),
-                  buildFormLogin(auth, state),
+                  buildFormLogin(auth, state, userNotifier, user, collectData),
                 ],
               ),
             ),
@@ -86,12 +93,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Card buildFormLogin(AuthNotifier auth, AuthState state) {
+  Card buildFormLogin(
+    AuthNotifier auth,
+    AuthState state,
+    UserNotifier userNotifier,
+    UserState user,
+    CollectUserApi collect,
+  ) {
     loginHandle() async {
       FocusManager.instance.primaryFocus?.unfocus();
       if (_formKey.currentState!.validate()) {
         await auth.login(usernameCtrl.text, passCtrl.text);
         if (state.isAuthenticated) {
+          await userNotifier.getUser();
+          collect.sendDataUser(user.user!);
           if (!mounted) return;
           Navigator.of(context).pushReplacementNamed(AppRoutes.main);
         } else {

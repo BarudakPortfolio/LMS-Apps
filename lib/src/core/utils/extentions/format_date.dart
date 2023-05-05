@@ -7,7 +7,7 @@ formatDate(String date) {
 }
 
 formatBornDate(String date) {
-  var format = DateFormat('dd MMMM yyyy');
+  var format = DateFormat('dd MMMM yyyy', 'id_ID');
   var formatted = format.format(DateTime.parse(date));
   return formatted;
 }
