@@ -35,7 +35,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   @override
   void initState() {
     Future.microtask(() {
-      ref.watch(assigmentNotifierProvider.notifier).getAssigment();
+      ref.watch(assigmentNotifierProvider.notifier).getAssigment("all");
     });
     _scrollController = ScrollController();
     _scrollController.addListener(() {
@@ -185,6 +185,9 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                             .toList(),
                         onChanged: (value) {
                           print(value);
+                          ref
+                              .watch(assigmentNotifierProvider.notifier)
+                              .getAssigment(value);
                         },
                       )),
                     ),

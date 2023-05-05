@@ -16,11 +16,11 @@ class AssigmentApi {
   AssigmentApi({required this.client});
 
   Future<Either<String, List<Tugas>>> getAssigment(String token,
-      {String? mapelId, String? isDone}) async {
+      {String? mapelId, String? status}) async {
     mapelId ??= "all";
-    isDone ??= "all";
+    status ??= "all";
     Uri url = Uri.parse(
-      "$BASE_URL/student_area/tugas?mapel_id=$mapelId&is_done=$isDone",
+      "$BASE_URL/student_area/tugas?mapel_id=$mapelId&is_done=$status",
     );
 
     final response = await client.get(url, headers: {
