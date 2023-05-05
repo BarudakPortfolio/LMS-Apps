@@ -14,18 +14,15 @@ import 'package:path_provider/path_provider.dart';
 import '../../../models/file.dart';
 
 final materiApiProvider = Provider<MateriApi>((ref) {
-  return MateriApi(
-      client: ref.watch(httpProvider), storage: ref.watch(storageProvider));
+  return MateriApi(client: ref.watch(httpProvider));
 });
 
 class MateriApi {
   final IOClient client;
-  final SecureStorage storage;
-  MateriApi({required this.client, required this.storage});
+  MateriApi({required this.client});
 
-  Future<Either<String, List<Materi>>> getMateri() async {
+  Future<Either<String, List<Materi>>> getMateri(String token) async {
     Uri url = Uri.parse("$BASE_URL/student_area/materi?perPage=100");
-    final token = await storage.read('token');
     final headers = {"Authorization": "Bearer $token"};
     final response = await client.get(url, headers: headers);
 
@@ -38,9 +35,8 @@ class MateriApi {
     }
   }
 
-  Future<Either<String, Materi>> getMateriDetail(int id) async {
+  Future<Either<String, Materi>> getMateriDetail(int id, String token) async {
     Uri url = Uri.parse("$BASE_URL/student_area/materi/$id");
-    final token = await storage.read('token');
     final headers = {"Authorization": "Bearer $token"};
     final response = await client.get(url, headers: headers);
 

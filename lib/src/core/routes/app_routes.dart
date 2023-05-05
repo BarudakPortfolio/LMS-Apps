@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lms/src/views/screens/assignment_screen.dart';
 import 'package:lms/src/views/screens/login_screen.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
-import 'package:lms/src/views/screens/materi_detail_screen.dart';
 import 'package:lms/src/views/screens/materi_screen.dart';
 import 'package:lms/src/views/screens/profile_screen.dart';
 import 'package:lms/src/views/screens/splash_screen.dart';

@@ -8,7 +8,11 @@ import '../../dashboard/data/dashboard_api.dart';
 
 final getItProvider = Provider<GetIt>((ref) {
   GetIt getIt = GetIt.instance;
-  getIt.registerLazySingleton(() => DashboardApi(getIt<SecureStorage>()));
+  getIt.registerLazySingleton(
+    () => DashboardApi(
+      client: getIt<IOClient>(),
+    ),
+  );
   getIt.registerLazySingleton(() => AuthApi(getIt<IOClient>()));
   getIt.registerLazySingleton(() => SecureStorage());
   getIt.registerLazySingleton(() => IOClient());

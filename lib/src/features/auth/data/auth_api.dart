@@ -13,6 +13,7 @@ final authApiProvider = Provider<AuthApi>((ref) {
 
 class AuthApi {
   final IOClient client;
+
   AuthApi(this.client);
   Future<Either<String, String>> login(
       {required String username, required String password}) async {
