@@ -2,9 +2,17 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:lms/src/core/utils/extentions/string_capitalize.dart';
+import 'package:lms/src/features/kelas/provider/class_notifier.dart';
+import 'package:lms/src/models/kelas.dart';
+import 'package:lms/src/views/components/card_class.dart';
 import 'package:time_planner/time_planner.dart';
 import 'package:lms/src/core/utils/extentions/remove_scroll_grow.dart';
 
+import '../../core/routes/app_routes.dart';
+import '../../core/style/theme.dart';
+import '../../core/utils/extentions/format_date.dart';
+import '../../core/utils/extentions/nama_dosen.dart';
 import 'main_screen.dart';
 
 class ClassScreen extends ConsumerStatefulWidget {
@@ -17,6 +25,7 @@ class ClassScreen extends ConsumerStatefulWidget {
 class _ClassScreenState extends ConsumerState<ClassScreen> {
   @override
   Widget build(BuildContext context) {
+    final kelas = ref.watch(classNotifierProvider);
     return Scaffold(
       body: DefaultTabController(
         length: 2,
@@ -73,64 +82,73 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
               ),
             ];
           },
-          body: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
+          body: TabBarView(children: [
+            ScrollConfiguration(
+              behavior: RemoveScrollGlow(),
+              child: Builder(
+                builder: (context) {
+                  if (kelas.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    if (kelas.classes != null) {
+                      final kelasList = kelas.classes;
+                      // print(data);
+                      return ListView.builder(
+                        itemCount: kelasList!.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (kelasList.isEmpty) {
+                            return const SizedBox
+                                .shrink(); // don't show empty list
+                          }
+                          return CardClass(
+                            kelas: kelasList[index],
+                          );
+                          ;
+                        },
+                      );
+                    } else {
+                      return const Center(
+                        child: Text('Materi tidak ada'),
+                      );
+                    }
+                  }
+                },
+              ),
             ),
-            child: TabBarView(children: [
-              ScrollConfiguration(
-                  behavior: RemoveScrollGlow(),
-                  child: SingleChildScrollView(
-                    child: Column(
-                        children: List.generate(
-                      20,
-                      (index) => Container(
-                        margin: const EdgeInsets.symmetric(vertical: 5),
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          tileColor: Colors.white,
-                          title: const Text("Nama"),
-                          subtitle: const Text("waktu"),
-                        ),
-                      ),
-                    )),
-                  )),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: ScrollConfiguration(
-                  behavior: RemoveScrollGlow(),
-                  child: TimePlanner(
-                    style: TimePlannerStyle(
-                      horizontalTaskPadding: 5,
-                      cellWidth: 120,
-                    ),
-                    headers: List.generate(7, (day) {
-                      var datetime = DateTime(2023, 8, day);
-                      String dayName =
-                          DateFormat("EEEE", "id_ID").format(datetime);
-                      return TimePlannerTitle(title: dayName);
-                    }),
-                    startHour: 7,
-                    endHour: 19,
-                    tasks: [
-                      TimePlannerTask(
-                        color: Colors.green,
-                        minutesDuration: 60,
-                        dateTime:
-                            TimePlannerDateTime(day: 0, hour: 8, minutes: 0),
-                        child: const ListTile(
-                          title: Text("Nama Kelas"),
-                          subtitle:
-                              Text("jam - jam", style: TextStyle(fontSize: 10)),
-                        ),
-                      ),
-                    ],
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: ScrollConfiguration(
+                behavior: RemoveScrollGlow(),
+                child: TimePlanner(
+                  style: TimePlannerStyle(
+                    horizontalTaskPadding: 5,
+                    cellWidth: 120,
                   ),
+                  headers: List.generate(7, (day) {
+                    var datetime = DateTime(2023, 8, day);
+                    String dayName =
+                        DateFormat("EEEE", "id_ID").format(datetime);
+                    return TimePlannerTitle(title: dayName);
+                  }),
+                  startHour: 7,
+                  endHour: 19,
+                  tasks: [
+                    TimePlannerTask(
+                      color: Colors.green,
+                      minutesDuration: 60,
+                      dateTime:
+                          TimePlannerDateTime(day: 0, hour: 8, minutes: 0),
+                      child: const ListTile(
+                        title: Text("Nama Kelas"),
+                        subtitle:
+                            Text("jam - jam", style: TextStyle(fontSize: 10)),
+                      ),
+                    ),
+                  ],
                 ),
-              )
-            ]),
-          ),
+              ),
+            )
+          ]),
         ),
       ),
     );
@@ -160,5 +178,85 @@ class MyTabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant MyTabBarDelegate oldDelegate) {
     return tabBar != oldDelegate.tabBar;
+  }
+}
+
+class CardClass extends StatelessWidget {
+  final Kelas kelas;
+
+  const CardClass({super.key, required this.kelas});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, AppRoutes.detailMateri,
+            arguments: kelas.id);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 20, left: 20, bottom: 10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${kelas.nama}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          )),
+                      Text('${kelas.namaGuru}',
+                          style: TextStyle(color: Colors.grey[500])),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: kGreenPrimary,
+                  ),
+                  child: Text(
+                    'Ruangan ${kelas.ruangan!}',
+                    style: const TextStyle(fontSize: 10, color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+            const Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(FluentIcons.calendar_clock_20_regular),
+                    const SizedBox(width: 3),
+                    Text(
+                      '${kelas.hari!.toTitleCase()}, ${kelas.waktuMulai!.substring(0, 5)} - ${kelas.waktuSelesai!.substring(0, 5)}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

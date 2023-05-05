@@ -11,7 +11,7 @@ class ClassState {
 
   factory ClassState.loading() => ClassState(isLoading: true);
 
-  factory ClassState.finisied(data) =>
+  factory ClassState.finished(data) =>
       ClassState(isLoading: false, classes: data);
 
   factory ClassState.error(message) =>

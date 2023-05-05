@@ -1,6 +1,9 @@
+import 'package:equatable/equatable.dart';
+import 'package:lms/src/models/guru.dart';
+
 import '../core/utils/extentions/nama_dosen.dart';
 
-class Kelas {
+class Kelas extends Equatable {
   String? id;
   String? nama;
   String? namaGuru;
@@ -25,7 +28,7 @@ class Kelas {
     return Kelas(
       id: json['kelas_mapel']['mapel']['id'].toString(),
       nama: json['kelas_mapel']['mapel']['nama'],
-      namaGuru: namaDosen(json['kelas_mapel']['guru']),
+      namaGuru: namaDosen(Guru.fromJson(json['kelas_mapel']['guru'])),
       avatar: json['kelas_mapel']['guru']['avatar'],
       hari: json['hari'],
       waktuMulai: json['jam_mulai'],
@@ -33,4 +36,8 @@ class Kelas {
       ruangan: json['ruangan']['nama'],
     );
   }
+
+  @override
+  List<Object?> get props =>
+      [id, nama, namaGuru, hari, avatar, waktuMulai, waktuSelesai, ruangan];
 }
