@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -35,16 +36,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         ),
       )
       ..loadRequest(Uri.parse(widget.url));
-    getData();
     super.initState();
-  }
-
-  void getData() async {
-    final judul = (await controller.getTitle())!;
-    print('ini $judul');
-    setState(() {
-      title = judul;
-    });
   }
 
   @override
@@ -59,23 +51,28 @@ class _WebViewScreenState extends State<WebViewScreen> {
               onPressed: () {
                 showMenu(
                   context: context,
-                  position: RelativeRect.fromLTRB(100, 0, 0, 0),
+                  position: const RelativeRect.fromLTRB(100, 0, 0, 0),
                   items: [
                     PopupMenuItem(
-                      onTap: () {
-                        print(widget.url);
+                      onTap: () async {
+                        await launchUrl(Uri.parse(widget.url));
                       },
-                      child: Text('Buka di Browser'),
+                      child: const Text('Buka di Browser'),
                     ),
-                    PopupMenuItem(child: Text("Salin Tautan"))
+                    PopupMenuItem(
+                        onTap: () async {
+                          await Clipboard.setData(
+                              ClipboardData(text: widget.url));
+                        },
+                        child: const Text("Salin Tautan"))
                   ],
                 );
               },
-              icon: Icon(Icons.more_vert),
+              icon: const Icon(Icons.more_vert),
             )
           ],
           title: ListTile(
-            title: Text(
+            title: const Text(
               'LMS Webview',
               style: TextStyle(
                   color: Colors.black,
@@ -84,7 +81,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
             ),
             subtitle: Text(
               widget.url,
-              style: TextStyle(fontSize: 10, overflow: TextOverflow.ellipsis),
+              style: const TextStyle(
+                  fontSize: 10, overflow: TextOverflow.ellipsis),
             ),
           )),
       body: WebViewWidget(
