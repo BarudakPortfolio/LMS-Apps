@@ -26,11 +26,11 @@ class AssignmentScreen extends ConsumerStatefulWidget {
 
 class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   late ScrollController _scrollController;
-  Map<String, String> statusAssigment = {
-    "Semua status": "all",
-    "Belum selesai": "n",
-    "Selesai": "y",
-  };
+  List<Map<String, String>> statusAssigment = [
+    {"status": "Semua status", "value": "all"},
+    {"status": "Belum selesai", "value": "n"},
+    {"status": "Selesai", "value": "y"},
+  ];
 
   @override
   void initState() {
@@ -177,10 +177,10 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                         iconEnabledColor: Colors.black,
                         isExpanded: true,
                         hint: const Text("Status Tugas"),
-                        items: statusAssigment.entries
+                        items: statusAssigment
                             .map((status) => DropdownMenuItem<String>(
-                                  value: status.value,
-                                  child: Text(status.key),
+                                  value: status['value'],
+                                  child: Text(status['status']!),
                                 ))
                             .toList(),
                         onChanged: (value) {
