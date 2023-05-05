@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:time_planner/time_planner.dart';
 import 'package:lms/src/core/utils/extentions/remove_scroll_grow.dart';
 
+import 'main_screen.dart';
+
 class ClassScreen extends ConsumerStatefulWidget {
   const ClassScreen({super.key});
 

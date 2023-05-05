@@ -11,6 +11,9 @@ ThemeData lightTheme = ThemeData(
   fontFamily: "Poppins",
   scaffoldBackgroundColor: kWhiteBg,
   primaryColor: kGreenPrimary,
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(backgroundColor: kGreenPrimary),
+  ),
   textTheme: const TextTheme(
     displayLarge: TextStyle(
         fontSize: 28, fontWeight: FontWeight.w800, color: Colors.black),

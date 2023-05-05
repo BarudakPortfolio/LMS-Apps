@@ -131,7 +131,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     TextForm(
                       usernameCtrl,
                       "Masukkan Nim",
-                      'Username',
                       validator: (value) {
                         if (value!.isEmpty) {
                           return "Harap Isi Username";
@@ -142,7 +141,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     TextForm(
                       passCtrl,
                       'Masukkan Password',
-                      "Password",
                       isObsecure: true,
                       validator: (value) {
                         if (value!.isEmpty) {

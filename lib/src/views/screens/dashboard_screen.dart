@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
@@ -267,7 +268,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             const Expanded(
                               flex: 2,
                               child: ListTile(
-                                title: Text("ELearning ITG",
+                                title: Text("ELearning",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,

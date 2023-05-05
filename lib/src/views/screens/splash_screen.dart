@@ -73,6 +73,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   @override
+  void dispose() {
+    animationController.dispose();
+    animationController.removeListener(() {});
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(

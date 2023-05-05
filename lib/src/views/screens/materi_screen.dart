@@ -9,6 +9,7 @@ import 'package:lms/src/core/utils/extentions/remove_scroll_grow.dart';
 
 import '../../features/materi/provider/materi/materi_provider.dart';
 import '../../models/materi.dart';
+import 'main_screen.dart';
 
 final scrollProvider = StateNotifierProvider<ScrollNotifier, bool>((ref) {
   return ScrollNotifier();

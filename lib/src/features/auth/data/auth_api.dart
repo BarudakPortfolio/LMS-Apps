@@ -16,7 +16,7 @@ class AuthApi {
   AuthApi(this.client);
   Future<Either<String, String>> login(
       {required String username, required String password}) async {
-    Uri url = Uri.parse('$baseUrl/auth/login');
+    Uri url = Uri.parse('$BASE_URL/auth/login');
     Map body = {
       'username': username,
       'password': password,

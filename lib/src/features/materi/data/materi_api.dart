@@ -24,7 +24,7 @@ class MateriApi {
   MateriApi({required this.client, required this.storage});
 
   Future<Either<String, List<Materi>>> getMateri() async {
-    Uri url = Uri.parse("$baseUrl/student_area/materi?perPage=100");
+    Uri url = Uri.parse("$BASE_URL/student_area/materi?perPage=100");
     final token = await storage.read('token');
     final headers = {"Authorization": "Bearer $token"};
     final response = await client.get(url, headers: headers);
@@ -39,14 +39,14 @@ class MateriApi {
   }
 
   Future<Either<String, Materi>> getMateriDetail(int id) async {
-    Uri url = Uri.parse("$baseUrl/student_area/materi/$id");
+    Uri url = Uri.parse("$BASE_URL/student_area/materi/$id");
     final token = await storage.read('token');
     final headers = {"Authorization": "Bearer $token"};
     final response = await client.get(url, headers: headers);
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body)["data"];
-      Materi materi = Materi.fromJson(result);
+      Map<String, dynamic> result = jsonDecode(response.body);
+      Materi materi = Materi.fromJson(result['data'], dataFoto: result['foto']);
       return Right(materi);
     } else {
       return const Left("Tidak ada Materi");

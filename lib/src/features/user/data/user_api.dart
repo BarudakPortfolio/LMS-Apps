@@ -19,7 +19,7 @@ class UserApi {
   UserApi(this.client, this.storage);
   Future<Either<String, Map>> getUser() async {
     final token = await storage.read('token');
-    Uri url = Uri.parse('$baseUrl/student_area/profile');
+    Uri url = Uri.parse('$BASE_URL/student_area/profile');
     Map<String, String> headers = {"Authorization": "Bearer $token"};
     final response = await client.get(url, headers: headers);
 

@@ -5,8 +5,7 @@ import '../../core/style/theme.dart';
 class TextForm extends StatelessWidget {
   const TextForm(
     this.controller,
-    this.hintText,
-    this.label, {
+    this.hintText, {
     super.key,
     this.isObsecure,
     this.validator,
@@ -14,7 +13,6 @@ class TextForm extends StatelessWidget {
 
   final TextEditingController controller;
   final String hintText;
-  final String label;
   final bool? isObsecure;
   final String? Function(String?)? validator;
 
@@ -36,7 +34,6 @@ class TextForm extends StatelessWidget {
           ),
           fillColor: const Color(0xffEDEDED),
           filled: true,
-          label: Text(label),
           labelStyle: const TextStyle(color: kGreenPrimary),
           contentPadding: const EdgeInsets.all(15),
           hintText: hintText,

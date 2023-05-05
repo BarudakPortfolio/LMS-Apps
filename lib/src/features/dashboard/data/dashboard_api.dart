@@ -18,7 +18,7 @@ class DashboardApi {
 
   Future<Either<String, Map>> getDashboardData() async {
     final token = await secureStorage.read('token');
-    Uri url = Uri.parse('$baseUrl/student_area/dashboard');
+    Uri url = Uri.parse('$BASE_URL/student_area/dashboard');
     Map<String, String> headers = {"Authorization": "Bearer $token"};
     final response = await http.get(url, headers: headers);
 

@@ -2,10 +2,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:lms/src/core/common/constants.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/features/materi/data/materi_api.dart';
+import 'package:lms/src/views/components/webview.dart';
+import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:open_file/open_file.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/materi/provider/materi_detail/materi_detail_provider.dart';
 
@@ -41,7 +45,45 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
         title: const Text("Detail Materi"),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                        title: const Text("Foto Autorisasi"),
+                        content: Image.network(
+                          "$BASE_IMAGE_URL${materi.data?.fotoAuth?.foto}",
+                          errorBuilder: (context, error, stackTrace) {
+                            return const SizedBox(
+                              height: 100,
+                              child: Center(child: Text("Gagal memuat foto")),
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return SizedBox(
+                              height: 100,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: kGreenPrimary,
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Tutup"))
+                        ],
+                      ));
+            },
             icon: const Icon(FluentIcons.video_person_16_regular),
           )
         ],
@@ -117,6 +159,14 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
                       materi.data!.konten!,
                       enableCaching: true,
                       renderMode: RenderMode.column,
+                      onTapUrl: (url) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            fullscreenDialog: true,
+                            builder: (context) {
+                              return WebViewScreen(url);
+                            }));
+                        return false;
+                      },
                     ),
                   ),
                   const SizedBox(height: 20),
