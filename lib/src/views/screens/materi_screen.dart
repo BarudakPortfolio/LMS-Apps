@@ -218,8 +218,11 @@ class CardMateri extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, AppRoutes.detailMateri,
-            arguments: materi.id);
+        Navigator.pushNamed(
+          context,
+          AppRoutes.detailMateri,
+          arguments: materi.id,
+        );
       },
       child: Container(
         margin: const EdgeInsets.only(right: 20, left: 20, bottom: 10),

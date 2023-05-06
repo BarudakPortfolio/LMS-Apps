@@ -41,10 +41,13 @@ class MateriApi {
     Uri url = Uri.parse("$BASE_URL/student_area/materi/$id");
     final headers = {"Authorization": "Bearer $token"};
     final response = await client.get(url, headers: headers);
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
-      Materi materi = Materi.fromJson(result['data'], dataFoto: result['foto']);
+    Map<String, dynamic> result = jsonDecode(response.body);
+    print(result);
+    if (result['status'] == 1) {
+      Materi materi = Materi.fromJson(
+        result['data'],
+        dataFoto: result['foto'],
+      );
       return Right(materi);
     } else {
       return const Left("Tidak ada Materi");

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/features/materi/data/materi_api.dart';
 import 'package:lms/src/features/storage/service/storage.dart';
@@ -11,12 +12,20 @@ class MateriDetailNotifier extends StateNotifier<MateriDetailState> {
       : super(MateriDetailState.noState());
 
   Future getMateriDetail(int id) async {
+    bool authorize = false;
     state = MateriDetailState.loading();
     final token = await storage.read('token');
     final materi = await materiApi.getMateriDetail(id, token);
     materi.fold(
-      (l) => state = MateriDetailState.error(l),
-      (r) => state = MateriDetailState.finished(r),
+      (l) {
+        state = MateriDetailState.error(l);
+        authorize = false;
+      },
+      (r) {
+        state = MateriDetailState.finished(r);
+        authorize = true;
+      },
     );
+    return authorize;
   }
 }

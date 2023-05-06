@@ -1,8 +1,10 @@
+import 'package:dartz/dartz.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:lms/src/core/common/constants.dart';
+import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/features/materi/data/materi_api.dart';
@@ -26,7 +28,12 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
     Future.microtask(() {
       ref
           .watch(materiDetailNotifierProvider.notifier)
-          .getMateriDetail(widget.id);
+          .getMateriDetail(widget.id)
+          .then((value) {
+        if (!value) {
+          Navigator.pushReplacementNamed(context, AppRoutes.cameraAutorisasi);
+        }
+      });
     });
     super.initState();
   }
