@@ -6,8 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/io_client.dart';
 import 'package:lms/src/core/common/constants.dart';
 import 'package:lms/src/features/http/provider/http_provider.dart';
-import 'package:lms/src/features/storage/provider/storage_provider.dart';
-import 'package:lms/src/features/storage/service/storage.dart';
 import 'package:lms/src/models/materi.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -21,8 +19,11 @@ class MateriApi {
   final IOClient client;
   MateriApi({required this.client});
 
-  Future<Either<String, List<Materi>>> getMateri(String token) async {
-    Uri url = Uri.parse("$BASE_URL/student_area/materi?perPage=100");
+  Future<Either<String, List<Materi>>> getMateri(String token,
+      {String? classId}) async {
+    classId ??= "all";
+    Uri url = Uri.parse(
+        "$BASE_URL/student_area/materi?perPage=100&mapel_id=$classId");
     final headers = {"Authorization": "Bearer $token"};
     final response = await client.get(url, headers: headers);
 

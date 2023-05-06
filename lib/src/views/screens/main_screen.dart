@@ -38,7 +38,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     Future.microtask(() {
-      UserModel? user = ref.watch(userNotifierProvider).user;
+      ref.watch(classNotifierProvider.notifier).getAllClass();
       ref.watch(dashboardNotifierProvider.notifier).getDashboardData();
       ref.watch(userNotifierProvider.notifier).getUser();
       ref.watch(materiNotifierProvider.notifier).getMateri();

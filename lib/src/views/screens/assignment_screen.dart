@@ -2,13 +2,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
-import 'package:lms/src/core/utils/extentions/check_status_tugas.dart';
-import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 import 'package:lms/src/features/kelas/provider/class_notifier.dart';
 
 import '../../models/kelas.dart';
-import '../../models/tugas.dart';
 import '../components/card_assigment.dart';
 
 final scrollProvider = StateNotifierProvider<ScrollNotifier, bool>((ref) {
@@ -66,7 +63,6 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
             newStatus: "all",
             newMapelId: 'all',
           );
-      ref.watch(classNotifierProvider.notifier).getAllClass();
     });
     _scrollController = ScrollController();
     _scrollController.addListener(() {

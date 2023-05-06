@@ -6,11 +6,13 @@ import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/core/utils/extentions/nama_dosen.dart';
 import 'package:lms/src/core/utils/extentions/remove_scroll_grow.dart';
+import 'package:lms/src/features/kelas/provider/class_notifier.dart';
+import 'package:lms/src/models/kelas.dart';
 
 import '../../features/materi/provider/materi/materi_provider.dart';
 import '../../models/materi.dart';
-import 'main_screen.dart';
 
+///[*NOTIFIER SCROLL]
 final scrollProvider = StateNotifierProvider<ScrollNotifier, bool>((ref) {
   return ScrollNotifier();
 });
@@ -19,6 +21,18 @@ class ScrollNotifier extends StateNotifier<bool> {
   ScrollNotifier() : super(false);
 
   void changeIsButton(bool newvalue) => state = newvalue;
+}
+
+///[*VALUE DROPDOWN NOTIFIER]
+final dropdownClassNotifierProvider =
+    StateNotifierProvider<DropdownClassNotifier, String>((ref) {
+  return DropdownClassNotifier();
+});
+
+class DropdownClassNotifier extends StateNotifier<String> {
+  DropdownClassNotifier() : super("all");
+
+  void changeStatus(String newClassId) => state = newClassId;
 }
 
 class MateriScreen extends ConsumerStatefulWidget {
@@ -64,6 +78,8 @@ class _MateriScreenState extends ConsumerState<MateriScreen> {
   Widget build(BuildContext context) {
     final isScrolled = ref.watch(scrollProvider);
     final materiState = ref.watch(materiNotifierProvider);
+    List<Kelas>? listClasses = ref.watch(classNotifierProvider).classes;
+    String selectedClass = ref.watch(dropdownClassNotifierProvider);
     return Scaffold(
       floatingActionButton: isScrolled
           ? FloatingActionButton(
@@ -132,18 +148,27 @@ class _MateriScreenState extends ConsumerState<MateriScreen> {
                         borderRadius: BorderRadius.circular(15),
                         iconEnabledColor: Colors.black,
                         isExpanded: true,
+                        value: selectedClass,
                         hint: const Text("Mata Kuliah"),
-                        items: [
-                          "Semua Mata Kuliah",
-                          "Pemrograman Mobile",
-                          "Matematika Diskrit"
-                        ]
-                            .map((kelas) => DropdownMenuItem<String>(
-                                  value: kelas,
-                                  child: Text(kelas),
-                                ))
-                            .toList(),
-                        onChanged: (value) {},
+                        items: listClasses == null
+                            ? []
+                            : [
+                                Kelas(id: "all", nama: "Semua Mata Kuliah"),
+                                ...listClasses
+                              ]
+                                .map((Kelas kelas) => DropdownMenuItem<String>(
+                                      value: kelas.id,
+                                      child: Text(kelas.nama!),
+                                    ))
+                                .toList(),
+                        onChanged: (value) {
+                          ref
+                              .watch(materiNotifierProvider.notifier)
+                              .getMateri(newClassId: value.toString());
+                          ref
+                              .watch(dropdownClassNotifierProvider.notifier)
+                              .changeStatus(value.toString());
+                        },
                       )),
                     ),
                   ],
@@ -154,7 +179,13 @@ class _MateriScreenState extends ConsumerState<MateriScreen> {
               Builder(
                 builder: (context) {
                   if (materiState.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const SizedBox(
+                      height: 200,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        color: kGreenPrimary,
+                      )),
+                    );
                   } else {
                     if (materiState.data != null) {
                       final data = materiState.data;

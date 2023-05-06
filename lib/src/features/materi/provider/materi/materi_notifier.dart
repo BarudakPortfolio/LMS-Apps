@@ -9,10 +9,10 @@ class MateriNotifier extends StateNotifier<MateriState> {
   MateriNotifier({required this.materiApi, required this.storage})
       : super(MateriState.noState());
 
-  Future getMateri() async {
+  Future getMateri({String? newClassId}) async {
     state = MateriState.loading();
     final token = await storage.read('token');
-    final materi = await materiApi.getMateri(token);
+    final materi = await materiApi.getMateri(token, classId: newClassId);
     materi.fold(
       (l) => state = MateriState.error(l),
       (r) => state = MateriState.finished(r),
