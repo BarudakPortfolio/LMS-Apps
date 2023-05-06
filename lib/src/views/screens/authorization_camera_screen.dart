@@ -46,21 +46,21 @@ class _AuthorizationCameraScreenState
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: const Text("Autorisasi"),
       ),
-      body: Center(
-        child: FutureBuilder(
-            future: _initializeControllerFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else {
-                return Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.rotationY(math.pi),
-                  child: Center(child: CameraPreview(_cameraCtrl)),
-                );
-              }
-            }),
-      ),
+      body: FutureBuilder(
+          future: _initializeControllerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else {
+              return Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationY(math.pi),
+                child: Container(
+                    padding: const EdgeInsets.all(20),
+                    child: CameraPreview(_cameraCtrl)),
+              );
+            }
+          }),
       floatingActionButton: FloatingActionButton(
         backgroundColor: kGreenPrimary,
         onPressed: () async {},

@@ -57,6 +57,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   void dispose() {
     usernameCtrl.dispose();
     passCtrl.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
