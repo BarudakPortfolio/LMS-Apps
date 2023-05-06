@@ -31,7 +31,11 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
           .getMateriDetail(widget.id)
           .then((value) {
         if (!value) {
-          Navigator.pushReplacementNamed(context, AppRoutes.cameraAutorisasi);
+          Navigator.pushReplacementNamed(
+            context,
+            AppRoutes.cameraAutorisasi,
+            arguments: widget.id.toString(),
+          );
         }
       });
     });

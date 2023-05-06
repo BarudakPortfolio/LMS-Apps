@@ -14,7 +14,6 @@ import 'package:lms/src/views/components/snackbar_widget.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/style/theme.dart';
 import '../../features/auth/provider/auth_provider.dart';
-import '../../models/user.dart';
 import '../components/form_input.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lms/src/views/screens/authorization_camera_screen.dart';
 import 'package:lms/src/views/screens/materi_detail_screen.dart';
 
 import 'core/routes/app_routes.dart';
@@ -22,6 +23,11 @@ class MainApp extends ConsumerWidget {
             return MaterialPageRoute(builder: (context) {
               final id = settings.arguments as int;
               return MateriDetailScreen(id: id);
+            });
+          case AppRoutes.cameraAutorisasi:
+            return MaterialPageRoute(builder: (context) {
+              final id = settings.arguments as String;
+              return AuthorizationCameraScreen(id);
             });
           default:
         }

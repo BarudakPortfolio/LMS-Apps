@@ -17,6 +17,5 @@ class AppRoutes {
     splash: (context) => const SplashScreen(),
     login: (context) => const LoginScreen(),
     main: (context) => const MainScreen(),
-    cameraAutorisasi: (context) => const AuthorizationCameraScreen(),
   };
 }
