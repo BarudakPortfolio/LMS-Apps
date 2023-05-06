@@ -14,7 +14,6 @@ dependencies:
   fluentui_system_icons: ^1.1.200
   flutter:
     sdk: flutter
-  flutter_downloader: ^1.10.2
   flutter_riverpod: ^2.3.6
   flutter_screenutil: ^5.7.0
   flutter_secure_storage: ^8.0.0
@@ -26,6 +25,7 @@ dependencies:
   lottie: ^2.3.2
   open_file: ^3.3.1
   path_provider: ^2.0.14
+  permission_handler: ^10.2.0
   shimmer_animation: ^2.1.0+1
   time_planner: ^0.1.1
   url_launcher: ^6.1.10

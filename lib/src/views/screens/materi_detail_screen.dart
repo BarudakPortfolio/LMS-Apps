@@ -177,10 +177,9 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: ListTile(
                                 onTap: () async {
-                                  final filePath = await ref
+                                  ref
                                       .watch(materiApiProvider)
                                       .getFileFromUrl(file);
-                                  OpenFile.open(filePath, type: file.tipeFile);
                                 },
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),

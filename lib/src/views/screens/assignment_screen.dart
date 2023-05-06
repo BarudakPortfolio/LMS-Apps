@@ -256,7 +256,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                     ),
                   ),
                 )
-              else if (assigmentList != null || assigmentList!.isNotEmpty)
+              else if (assigmentList != null && assigmentList.isNotEmpty)
                 Column(
                   children: assigmentList
                       .map(

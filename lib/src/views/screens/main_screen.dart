@@ -86,8 +86,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             type: BottomNavigationBarType.fixed,
             elevation: 0,
             selectedFontSize: 12,
-            unselectedFontSize: 12,
             selectedItemColor: Theme.of(context).primaryColor,
+            unselectedFontSize: 10,
             unselectedItemColor: Colors.grey.shade400,
             items: const [
               BottomNavigationBarItem(
