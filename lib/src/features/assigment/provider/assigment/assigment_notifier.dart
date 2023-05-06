@@ -9,10 +9,14 @@ class AssigmentNotifier extends StateNotifier<AssigmentState> {
   AssigmentNotifier({required this.storage, required this.assigmentApi})
       : super(AssigmentState.noState());
 
-  void getAssigment(status) async {
+  void getAssigment({String? newStatus, String? newMapelId}) async {
     state = AssigmentState.loading();
     final token = await storage.read('token');
-    final result = await assigmentApi.getAssigment(token, status: status);
+    final result = await assigmentApi.getAssigment(
+      token,
+      status: newStatus,
+      mapelId: newMapelId,
+    );
     result.fold(
       (l) => state = AssigmentState.error(l),
       (r) => state = AssigmentState.finished(r),

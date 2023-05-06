@@ -26,6 +26,7 @@ class AssigmentApi {
     final response = await client.get(url, headers: {
       "Authorization": "Bearer $token",
     });
+    print(url);
     print(response.body);
 
     if (response.statusCode == 200) {

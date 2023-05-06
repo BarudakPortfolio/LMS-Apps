@@ -5,6 +5,11 @@ import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/check_status_tugas.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
+import 'package:lms/src/features/kelas/provider/class_notifier.dart';
+
+import '../../models/kelas.dart';
+import '../../models/tugas.dart';
+import '../components/card_assigment.dart';
 
 final scrollProvider = StateNotifierProvider<ScrollNotifier, bool>((ref) {
   return ScrollNotifier();
@@ -14,6 +19,28 @@ class ScrollNotifier extends StateNotifier<bool> {
   ScrollNotifier() : super(false);
 
   void changeIsButton(bool newvalue) => state = newvalue;
+}
+
+final dropdownStatusNotifierProvider =
+    StateNotifierProvider<DropdownStatusNotifier, String>((ref) {
+  return DropdownStatusNotifier();
+});
+
+class DropdownStatusNotifier extends StateNotifier<String> {
+  DropdownStatusNotifier() : super("all");
+
+  void changeStatus(String newStatus) => state = newStatus;
+}
+
+final dropdownClassNotifierProvider =
+    StateNotifierProvider<DropdownClassNotifier, String>((ref) {
+  return DropdownClassNotifier();
+});
+
+class DropdownClassNotifier extends StateNotifier<String> {
+  DropdownClassNotifier() : super("all");
+
+  void changeStatus(String newClassId) => state = newClassId;
 }
 
 class AssignmentScreen extends ConsumerStatefulWidget {
@@ -26,16 +53,20 @@ class AssignmentScreen extends ConsumerStatefulWidget {
 
 class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   late ScrollController _scrollController;
-  List<Map<String, String>> statusAssigment = [
-    {"status": "Semua status", "value": "all"},
-    {"status": "Belum selesai", "value": "n"},
-    {"status": "Selesai", "value": "y"},
-  ];
+  static const Map<String, String> statuses = {
+    "Semua status": "all",
+    "Belum Selesai": "n",
+    "Selesai": "y",
+  };
 
   @override
   void initState() {
     Future.microtask(() {
-      ref.watch(assigmentNotifierProvider.notifier).getAssigment("all");
+      ref.watch(assigmentNotifierProvider.notifier).getAssigment(
+            newStatus: "all",
+            newMapelId: 'all',
+          );
+      ref.watch(classNotifierProvider.notifier).getAllClass();
     });
     _scrollController = ScrollController();
     _scrollController.addListener(() {
@@ -68,7 +99,9 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   Widget build(BuildContext context) {
     final isScrolled = ref.watch(scrollProvider);
     final assigmentList = ref.watch(assigmentNotifierProvider).data;
-
+    final status = ref.watch(dropdownStatusNotifierProvider);
+    final classSelected = ref.watch(dropdownClassNotifierProvider);
+    final listclass = ref.watch(classNotifierProvider).classes;
     return Scaffold(
       floatingActionButton: isScrolled
           ? FloatingActionButton(
@@ -123,7 +156,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                     const Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Text("Pilih Mata Kuliah : "),
+                      child: Text("Pilih Kategori Tugas : "),
                     ),
                     Container(
                       margin: const EdgeInsets.all(5),
@@ -133,23 +166,34 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: DropdownButtonHideUnderline(
-                          child: DropdownButton(
+                          child: DropdownButton<String>(
                         menuMaxHeight: 250,
                         borderRadius: BorderRadius.circular(15),
                         iconEnabledColor: Colors.black,
                         isExpanded: true,
+                        value: classSelected,
                         hint: const Text("Mata Kuliah"),
-                        items: [
-                          "Semua Mata Kuliah",
-                          "Pemrograman Mobile",
-                          "Matematika Diskrit"
-                        ]
-                            .map((kelas) => DropdownMenuItem<String>(
-                                  value: kelas,
-                                  child: Text(kelas),
-                                ))
-                            .toList(),
-                        onChanged: (value) {},
+                        items: listclass == null
+                            ? []
+                            : [
+                                Kelas(id: "all", nama: "Semua mata kuliah"),
+                                ...listclass
+                              ]
+                                .map((Kelas kelas) => DropdownMenuItem<String>(
+                                      value: kelas.id,
+                                      child: Text(kelas.nama!),
+                                    ))
+                                .toList(),
+                        onChanged: (value) {
+                          ref
+                              .watch(assigmentNotifierProvider.notifier)
+                              .getAssigment(
+                                  newStatus: status,
+                                  newMapelId: value.toString());
+                          ref
+                              .watch(dropdownClassNotifierProvider.notifier)
+                              .changeStatus(value.toString());
+                        },
                       )),
                     ),
                   ],
@@ -171,23 +215,34 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: DropdownButtonHideUnderline(
-                          child: DropdownButton(
+                          child: DropdownButton<String>(
                         menuMaxHeight: 250,
                         borderRadius: BorderRadius.circular(15),
                         iconEnabledColor: Colors.black,
                         isExpanded: true,
+                        value: status,
                         hint: const Text("Status Tugas"),
-                        items: statusAssigment
-                            .map((status) => DropdownMenuItem<String>(
-                                  value: status['value'],
-                                  child: Text(status['status']!),
-                                ))
+                        items: statuses
+                            .map((key, value) {
+                              return MapEntry(
+                                  key,
+                                  DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(key),
+                                  ));
+                            })
+                            .values
                             .toList(),
                         onChanged: (value) {
-                          print(value);
                           ref
                               .watch(assigmentNotifierProvider.notifier)
-                              .getAssigment(value);
+                              .getAssigment(
+                                newStatus: value,
+                                newMapelId: classSelected.toString(),
+                              );
+                          ref
+                              .watch(dropdownStatusNotifierProvider.notifier)
+                              .changeStatus(value!);
                         },
                       )),
                     ),
@@ -196,121 +251,32 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
               )),
           SliverList(
             delegate: SliverChildListDelegate([
-              assigmentList == null
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: kGreenPrimary,
-                      ),
-                    )
-                  : Column(
-                      children: assigmentList
-                          .map(
-                            (assigment) => Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 20),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 3,
-                                        child: ListTile(
-                                          title: Text(
-                                              "${assigment.detail?.mapel?.nama}",
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              )),
-                                          subtitle: Text(
-                                            "${assigment.detail?.judul}",
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Text(
-                                                    formatDateToNumber(
-                                                        assigment.createdAt!),
-                                                    textAlign: TextAlign.center,
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                    )),
-                                                const SizedBox(height: 10),
-                                                getAssigmentStatus(assigment)
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    child: Row(
-                                      children: [
-                                        if (assigment.isDone == 'y')
-                                          const BannerGrade(
-                                              "Dinilai", Colors.green),
-                                        if (assigment.pesan != null)
-                                          const BannerGrade(
-                                              "Pesan", Colors.yellow),
-                                        if (assigment.isDone == 'n')
-                                          const BannerGrade(
-                                              "Belum dinilai", Colors.grey),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          )
-                          .toList())
+              if (ref.watch(assigmentNotifierProvider).isLoading)
+                const SizedBox(
+                  height: 200,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: kGreenPrimary,
+                    ),
+                  ),
+                )
+              else if (ref.watch(assigmentNotifierProvider).data!.isNotEmpty)
+                Column(
+                  children: assigmentList!
+                      .map(
+                        (assigment) => CardAssigment(assigment),
+                      )
+                      .toList(),
+                )
+              else
+                const SizedBox(
+                  height: 200,
+                  child: Center(child: Text("Tugas tidak ada")),
+                )
             ]),
           ),
         ],
       ),
-    );
-  }
-}
-
-class BannerGrade extends StatelessWidget {
-  const BannerGrade(
-    this.text,
-    this.color, {
-    super.key,
-  });
-
-  final String text;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 2,
-      ),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(text,
-          style: const TextStyle(
-            fontSize: 10,
-            color: Colors.white,
-          )),
     );
   }
 }
