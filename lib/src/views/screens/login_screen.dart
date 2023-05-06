@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lms/src/features/auth/provider/auth_notifier.dart';
 import 'package:lms/src/features/auth/provider/auth_state.dart';
 import 'package:lms/src/features/collect_user/data/collect_user_api.dart';
@@ -23,10 +24,34 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final TextEditingController usernameCtrl = TextEditingController();
-  final TextEditingController passCtrl = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class _LoginScreenState extends ConsumerState<LoginScreen>
+    with SingleTickerProviderStateMixin {
+  late TextEditingController usernameCtrl;
+  late TextEditingController passCtrl;
+  late GlobalKey<FormState> _formKey;
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    usernameCtrl = TextEditingController();
+    passCtrl = TextEditingController();
+    _formKey = GlobalKey<FormState>();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1), // Set the animation duration
+      vsync: this,
+    );
+
+    // Define the opacity transition from 0.0 to 1.0
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(_controller);
+
+    // Start the animation
+    _controller.forward();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -44,35 +69,54 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final collectData = ref.watch(collectdataProvider);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(children: [
-        Container(
-          height: size.height,
+        SizedBox(
           width: size.width,
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-            image: AssetImage(
-              "assets/images/bg.png",
-            ),
-            fit: BoxFit.cover,
-          )),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-            child: Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 40,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SvgPicture.asset(
+                'assets/images/splash.svg',
+                width: size.width,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildHeader(),
-                  const SizedBox(height: 15),
-                  buildFormLogin(auth, state, userNotifier, user, collectData),
-                ],
-              ),
-            ),
+              Container(
+                width: size.width,
+                height: size.height * 0.3,
+                decoration: BoxDecoration(
+                    color: kGreenPrimary,
+                    borderRadius: BorderRadius.circular(_animation.value * 5)),
+              )
+            ],
           ),
-        )
+        ),
+        AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              return Opacity(
+                opacity: _animation.value,
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+                  child: Container(
+                    width: 100,
+                  ),
+                ),
+              );
+            }),
+        Container(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 40,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildHeader(),
+              const SizedBox(height: 15),
+              buildFormLogin(auth, state, userNotifier, user, collectData),
+            ],
+          ),
+        ),
       ]),
     );
   }

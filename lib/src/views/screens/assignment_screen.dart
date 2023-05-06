@@ -260,9 +260,9 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                     ),
                   ),
                 )
-              else if (ref.watch(assigmentNotifierProvider).data!.isNotEmpty)
+              else if (assigmentList != null || assigmentList!.isNotEmpty)
                 Column(
-                  children: assigmentList!
+                  children: assigmentList
                       .map(
                         (assigment) => CardAssigment(assigment),
                       )
