@@ -30,13 +30,15 @@ class ClassApi {
       Map<String, dynamic> uniqueMaps = {};
 
       for (var map in kelasPerDay) {
-        if (!uniqueMaps.containsKey(
-            '${map['kelas_mapel']['mapel']['nama']}-${map['hari']}')) {
-          uniqueMaps[map['kelas_mapel']['mapel']['nama']] = map;
+        String key = '${map['kelas_mapel']['mapel']['nama']}-${map['hari']}';
+        if (!uniqueMaps.containsKey(key)) {
+          uniqueMaps[key] = map;
         }
       }
 
-      List uniqueList = uniqueMaps.values.toList();
+      List uniqueList = uniqueMaps.values.toSet().toList();
+      uniqueList
+          .removeWhere((element) => element['ruangan']["nama"] == "Online");
 
       List<Kelas> convertMapToKelas =
           uniqueList.map((e) => Kelas.fromJson(e)).toList();

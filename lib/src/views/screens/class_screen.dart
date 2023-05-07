@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -119,33 +121,52 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
               padding: const EdgeInsets.only(top: 10),
               child: ScrollConfiguration(
                 behavior: RemoveScrollGlow(),
-                child: TimePlanner(
-                  style: TimePlannerStyle(
-                    horizontalTaskPadding: 5,
-                    cellWidth: 120,
-                  ),
-                  headers: List.generate(7, (day) {
-                    var datetime = DateTime(2023, 8, day);
-                    String dayName =
-                        DateFormat("EEEE", "id_ID").format(datetime);
-                    return TimePlannerTitle(title: dayName);
-                  }),
-                  startHour: 7,
-                  endHour: 19,
-                  tasks: [
-                    TimePlannerTask(
-                      color: Colors.green,
-                      minutesDuration: 60,
-                      dateTime:
-                          TimePlannerDateTime(day: 0, hour: 8, minutes: 0),
-                      child: const ListTile(
-                        title: Text("Nama Kelas"),
-                        subtitle:
-                            Text("jam - jam", style: TextStyle(fontSize: 10)),
-                      ),
+                child: Builder(builder: (context) {
+                  return TimePlanner(
+                    style: TimePlannerStyle(
+                      horizontalTaskPadding: 5,
+                      cellWidth: 200,
                     ),
-                  ],
-                ),
+                    headers: List.generate(7, (day) {
+                      var datetime = DateTime(2023, 8, day);
+                      String dayName =
+                          DateFormat("EEEE", "id_ID").format(datetime);
+                      return TimePlannerTitle(title: dayName);
+                    }),
+                    startHour: 7,
+                    endHour: 19,
+                    tasks: kelas.classes?.map((data) {
+                      DateTime startTime =
+                          DateTime.parse('1970-01-02 ${data.waktuMulai!}');
+                      DateTime endTime =
+                          DateTime.parse('1970-01-02 ${data.waktuSelesai!}');
+                      Duration difference = endTime.difference(startTime);
+                      int differenceInMinutes = difference.inMinutes;
+                      int day = dayToNumber(data.hari!);
+                      return TimePlannerTask(
+                        minutesDuration: differenceInMinutes,
+                        dateTime: TimePlannerDateTime(
+                          day: day,
+                          hour: startTime.hour,
+                          minutes: startTime.minute,
+                        ),
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListTile(
+                              title: Text(data.nama ?? "no name",
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 12)),
+                              subtitle: Text(
+                                  "${data.waktuMulai!.substring(0, 5)} - ${data.waktuSelesai!.substring(0, 5)}",
+                                  style: const TextStyle(
+                                      color: Colors.black, fontSize: 10)),
+                            )),
+                        onTap: () {},
+                      );
+                    }).toList(),
+                  );
+                }),
               ),
             )
           ]),

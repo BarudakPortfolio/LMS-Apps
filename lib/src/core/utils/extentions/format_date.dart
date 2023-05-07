@@ -23,3 +23,22 @@ formatDateToNumber(String date) {
   var formatted = format.format(DateTime.parse(date));
   return formatted;
 }
+
+int dayToNumber(String day) {
+  switch (day.toLowerCase()) {
+    case 'senin':
+      return 0;
+    case 'selasa':
+      return 1;
+    case 'rabu':
+      return 2;
+    case 'kamis':
+      return 3;
+    case 'jumat':
+      return 4;
+    case 'sabtu':
+      return 5;
+    default:
+      throw Exception('Invalid day : $day');
+  }
+}
