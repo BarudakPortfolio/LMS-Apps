@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/features/kelas/provider/class_notifier.dart';
 import 'package:lms/src/views/screens/materi_screen.dart';
 import 'package:lms/src/views/screens/profile_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../features/dashboard/provider/dashboard_provider.dart';
 import '../../features/materi/provider/materi/materi_provider.dart';
@@ -37,7 +38,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   bool isClickButton = false;
   @override
   void initState() {
-    Future.microtask(() {
+    Future.microtask(() async {
       ref.watch(classNotifierProvider.notifier).getAllClass();
       ref.watch(dashboardNotifierProvider.notifier).getDashboardData();
       ref.watch(userNotifierProvider.notifier).getUser();

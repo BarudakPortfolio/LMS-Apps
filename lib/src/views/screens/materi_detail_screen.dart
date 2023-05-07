@@ -10,6 +10,7 @@ import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/features/materi/data/materi_api.dart';
 import 'package:lms/src/views/components/webview.dart';
 import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../features/materi/provider/materi_detail/materi_detail_provider.dart';
 
@@ -25,7 +26,7 @@ class MateriDetailScreen extends ConsumerStatefulWidget {
 class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
   @override
   void initState() {
-    Future.microtask(() {
+    Future.microtask(() async {
       ref
           .watch(materiDetailNotifierProvider.notifier)
           .getMateriDetail(widget.id)
@@ -38,6 +39,10 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
           );
         }
       });
+      if (await Permission.manageExternalStorage.isDenied) {
+        Permission.manageExternalStorage.request();
+        Permission.camera.request();
+      }
     });
     super.initState();
   }
@@ -188,6 +193,12 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: ListTile(
                                 onTap: () async {
+                                  if (await Permission
+                                      .manageExternalStorage.isDenied) {
+                                    await Permission.manageExternalStorage
+                                        .request();
+                                    await Permission.camera.request();
+                                  }
                                   ref
                                       .watch(materiApiProvider)
                                       .getFileFromUrl(file);

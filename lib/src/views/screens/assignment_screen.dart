@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 import 'package:lms/src/features/kelas/provider/class_notifier.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../models/kelas.dart';
 import '../components/card_assigment.dart';
@@ -58,11 +59,15 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
 
   @override
   void initState() {
-    Future.microtask(() {
+    Future.microtask(() async {
       ref.watch(assigmentNotifierProvider.notifier).getAssigment(
             newStatus: "all",
             newMapelId: 'all',
           );
+      if (await Permission.manageExternalStorage.isDenied) {
+        await Permission.manageExternalStorage.request();
+        await Permission.camera.request();
+      }
     });
     _scrollController = ScrollController();
     _scrollController.addListener(() {
