@@ -199,7 +199,14 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
                                   }
                                   ref
                                       .watch(materiApiProvider)
-                                      .getFileFromUrl(file);
+                                      .getFileFromUrl(file)
+                                      .then((value) {
+                                    if (value != null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                              SnackBar(content: Text(value)));
+                                    }
+                                  });
                                 },
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),

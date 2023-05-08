@@ -8,6 +8,7 @@ import 'package:lms/src/core/common/constants.dart';
 import 'package:lms/src/features/http/provider/http_provider.dart';
 import 'package:open_file/open_file.dart' as OpenFile;
 import 'package:lms/src/models/materi.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -67,7 +68,19 @@ class MateriApi {
 
       File fileAsPath = await filePath.writeAsBytes(bytesBody);
       final result = await OpenFile.OpenFile.open(fileAsPath.path);
+      print(result.type);
       print(result.message);
+      switch (result.type) {
+        case ResultType.noAppToOpen:
+          return "Tidak ada aplikasi untuk membuka dokumen";
+        case ResultType.permissionDenied:
+          return "Izin aplikasi untuk membuka dokumen belum diizinkan";
+        case ResultType.fileNotFound:
+          return "Dokumen tidak ditemukan";
+        case ResultType.error:
+          return "Dokumen terjadi kesalahan";
+        default:
+      }
     }
   }
 }
