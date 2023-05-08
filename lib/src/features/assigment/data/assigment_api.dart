@@ -41,6 +41,28 @@ class AssigmentApi {
     return const Left("Tugas Tidak Ada");
   }
 
+  Future<Either<String, Tugas>> getDetailAssigment(
+    String token,
+    String idTugas,
+  ) async {
+    Uri url = Uri.parse(
+      "$BASE_URL/student_area/tugas/$idTugas",
+    );
+
+    final response = await client.get(url, headers: {
+      "Authorization": "Bearer $token",
+    });
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> result = jsonDecode(response.body)['data'];
+      Tugas assigment = Tugas.fromJson(result);
+      return Right(assigment);
+    }
+    return const Left("Tugas Tidak Ada");
+  }
+
   Future getFileFromUrl(FileModel document) async {
     Uri url = Uri.parse(
       "https://elearning.itg.ac.id/upload/tugas/${document.namaFile}",

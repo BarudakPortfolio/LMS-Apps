@@ -42,7 +42,6 @@ class MateriApi {
     final headers = {"Authorization": "Bearer $token"};
     final response = await client.get(url, headers: headers);
     Map<String, dynamic> result = jsonDecode(response.body);
-    print(result);
     if (result['status'] == 1) {
       Materi materi = Materi.fromJson(
         result['data'],

@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +8,6 @@ import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/features/materi/data/materi_api.dart';
 import 'package:lms/src/views/components/webview.dart';
-import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../features/materi/provider/materi_detail/materi_detail_provider.dart';
@@ -65,7 +63,7 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
                   builder: (_) => AlertDialog(
                         title: const Text("Foto Autorisasi"),
                         content: Image.network(
-                          "$BASE_IMAGE_URL${materi.data?.fotoAuth?.foto}",
+                          "$BASE_IMAGE_URL/foto_absensi/${materi.data?.fotoAuth?.foto}",
                           errorBuilder: (context, error, stackTrace) {
                             return const SizedBox(
                               height: 100,

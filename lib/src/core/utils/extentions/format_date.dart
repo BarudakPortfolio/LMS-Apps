@@ -18,6 +18,12 @@ formatDay(String date) {
   return formatted;
 }
 
+dynamic formatDatetimeNumber(String date) {
+  var format = DateFormat('EE dd MMM yyyy, H:m', 'id_ID');
+  var formatted = format.format(DateTime.parse(date));
+  return formatted;
+}
+
 formatDateToNumber(String date) {
   var format = DateFormat('EEEE dd-mm-yyyy', 'id_ID');
   var formatted = format.format(DateTime.parse(date));
