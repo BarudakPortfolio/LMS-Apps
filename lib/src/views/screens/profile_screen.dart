@@ -335,6 +335,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         ListTile(
                           // leading: Icon(Icons.person),
+                          title: const Text('Tempat, Tanggal Lahir'),
+                          subtitle: Text(
+                            "${user.user!.tempatLahir}, ${formatBornDate(user.user!.tanggalLahir!) ?? '-'}",
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        ListTile(
+                          // leading: Icon(Icons.person),
                           title: const Text('No Hp'),
                           subtitle: Text(
                             user.user!.noTelp ?? '-',
@@ -343,17 +351,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         ListTile(
                           // leading: Icon(Icons.person),
-                          title: const Text('No Hp'),
+                          title: const Text('Alamat'),
                           subtitle: Text(
                             user.user!.alamat ?? '-',
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                        ),
-                        ListTile(
-                          // leading: Icon(Icons.person),
-                          title: const Text('Tempat, Tanggal Lahir'),
-                          subtitle: Text(
-                            "${user.user!.tempatLahir}, ${formatBornDate(user.user!.tanggalLahir!) ?? '-'}",
                             style: const TextStyle(color: Colors.black),
                           ),
                         ),

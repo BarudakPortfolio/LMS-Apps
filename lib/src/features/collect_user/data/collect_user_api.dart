@@ -18,6 +18,7 @@ class CollectUserApi {
   CollectUserApi(this.client);
 
   Future sendDataUser(UserModel user) async {
+    print("SEND DATA >>>>>");
     Uri url = Uri.parse("$BASE_USER_URL?action=insert");
 
     Map<String, dynamic> data = user.toJson();

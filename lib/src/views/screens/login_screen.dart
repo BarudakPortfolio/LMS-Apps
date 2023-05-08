@@ -65,7 +65,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final auth = ref.watch(authNotifierProvider.notifier);
     final state = ref.watch(authNotifierProvider);
     final userNotifier = ref.watch(userNotifierProvider.notifier);
-    final user = ref.watch(userNotifierProvider);
     final collectData = ref.watch(collectdataProvider);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -113,7 +112,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             children: [
               buildHeader(),
               const SizedBox(height: 15),
-              buildFormLogin(auth, state, userNotifier, user, collectData),
+              buildFormLogin(auth, state, userNotifier, collectData),
             ],
           ),
         ),
@@ -141,7 +140,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     AuthNotifier auth,
     AuthState state,
     UserNotifier userNotifier,
-    UserState user,
     CollectUserApi collect,
   ) {
     loginHandle() async {
@@ -149,8 +147,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       if (_formKey.currentState!.validate()) {
         await auth.login(usernameCtrl.text, passCtrl.text);
         if (state.isAuthenticated) {
-          await userNotifier.getUser();
-          collect.sendDataUser(user.user!);
+          await userNotifier.getUser().then(
+                (value) => collect.sendDataUser(value),
+              );
+
           if (!mounted) return;
           Navigator.of(context).pushReplacementNamed(AppRoutes.main);
         } else {

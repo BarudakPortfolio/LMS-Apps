@@ -13,10 +13,14 @@ class UserNotifier extends StateNotifier<UserState> {
       : super(UserState.noState());
 
   Future getUser() async {
+    UserModel? user;
     state = UserState.loading();
     final result = await userApi.getUser();
 
-    result.fold((l) => state = UserState.error(l),
-        (r) => state = UserState.finished(UserModel.fromJson(r)));
+    result.fold((l) => state = UserState.error(l), (r) {
+      user = UserModel.fromJson(r);
+      state = UserState.finished(UserModel.fromJson(r));
+    });
+    return user;
   }
 }
