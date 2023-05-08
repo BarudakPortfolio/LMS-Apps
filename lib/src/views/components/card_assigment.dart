@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/routes/app_routes.dart';
+import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 
 import '../../core/utils/extentions/check_status_tugas.dart';
 import '../../core/utils/extentions/format_date.dart';
 import '../../models/tugas.dart';
 import 'banner_grade.dart';
 
-class CardAssigment extends StatelessWidget {
+class CardAssigment extends ConsumerWidget {
   Tugas assigment;
   CardAssigment(
     this.assigment, {
@@ -14,7 +16,7 @@ class CardAssigment extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
       onTap: () {
         print("FOTO ${assigment.foto}");
@@ -22,7 +24,10 @@ class CardAssigment extends StatelessWidget {
           Navigator.pushNamed(
             context,
             AppRoutes.cameraAutorisasi,
-            arguments: assigment.id.toString(),
+            arguments: {
+              "id": assigment.id.toString(),
+              "isTugas": true,
+            },
           );
         } else {
           Navigator.pushNamed(

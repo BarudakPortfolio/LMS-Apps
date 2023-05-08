@@ -90,7 +90,7 @@ class _AssignmentDetailScreenState
           )
         ],
       ),
-      body: state.isLoading
+      body: state.isLoading && state.data == null
           ? const Center(
               child: CircularProgressIndicator(
                 color: kGreenPrimary,

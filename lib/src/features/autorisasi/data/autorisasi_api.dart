@@ -40,12 +40,12 @@ class AutorisasiApi {
     final response = await client.post(url, body: data, headers: {
       "Authorization": "Bearer $token",
     });
+    print(response.body);
     final result = jsonDecode(response.body);
     if (result['status'] == 1) {
       return true;
     } else {
       return false;
     }
-    print(response.body);
   }
 }

@@ -4,15 +4,20 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/routes/app_routes.dart';
+import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 import 'package:lms/src/features/autorisasi/data/autorisasi_api.dart';
 import 'package:lms/src/features/autorisasi/provider/autorisasi_notifier.dart';
+import 'package:lms/src/features/materi/provider/materi/materi_provider.dart';
+import 'package:lms/src/views/screens/assignment_screen.dart';
+import 'package:lms/src/views/screens/materi_screen.dart' as materi;
 
 import '../../../main.dart';
 import '../../core/style/theme.dart';
 
 class AuthorizationCameraScreen extends ConsumerStatefulWidget {
   final String id;
-  const AuthorizationCameraScreen(this.id, {super.key});
+  final bool isTugas;
+  const AuthorizationCameraScreen(this.id, {required this.isTugas, super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -47,6 +52,9 @@ class _AuthorizationCameraScreenState
   @override
   Widget build(BuildContext context) {
     final foto = ref.watch(autorisasiNotifierProvider);
+    final status = ref.watch(dropdownStatusNotifierProvider);
+    final idKelas = ref.watch(dropdownClassNotifierProvider);
+    final idKelasMateri = ref.watch(materi.dropdownClassNotifierProvider);
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: AppBar(
@@ -111,19 +119,37 @@ class _AuthorizationCameraScreenState
                   backgroundColor: kGreenPrimary,
                   onPressed: () {
                     final autorisasiApi = ref.watch(autorisasiProvider);
+                    final type = widget.isTugas ? 'tugas' : "materi";
                     autorisasiApi
                         .sendAutorisasi(
                       id: widget.id,
                       foto: ref.watch(autorisasiNotifierProvider),
-                      type: "materi",
+                      type: type,
                     )
                         .then((value) {
                       if (value) {
-                        Navigator.pushReplacementNamed(
-                          context,
-                          AppRoutes.detailMateri,
-                          arguments: int.parse(widget.id),
-                        );
+                        if (type == 'materi') {
+                          ref
+                              .watch(materiNotifierProvider.notifier)
+                              .getMateri(newClassId: idKelasMateri);
+                          Navigator.pushReplacementNamed(
+                            context,
+                            AppRoutes.detailMateri,
+                            arguments: int.parse(widget.id),
+                          );
+                        } else {
+                          ref
+                              .watch(assigmentNotifierProvider.notifier)
+                              .getAssigment(
+                                newStatus: status,
+                                newMapelId: idKelas,
+                              );
+                          Navigator.pushReplacementNamed(
+                            context,
+                            AppRoutes.detailTugas,
+                            arguments: widget.id,
+                          );
+                        }
                       }
                     });
                   },

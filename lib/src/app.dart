@@ -27,12 +27,18 @@ class MainApp extends ConsumerWidget {
             });
           case AppRoutes.cameraAutorisasi:
             return MaterialPageRoute(builder: (context) {
-              final id = settings.arguments as String;
-              return AuthorizationCameraScreen(id);
+              Map<String, dynamic> argument =
+                  settings.arguments as Map<String, dynamic>;
+              print("ARGUMENT >>> $argument");
+              return AuthorizationCameraScreen(
+                argument['id'].toString(),
+                isTugas: argument['isTugas'],
+              );
             });
           case AppRoutes.detailTugas:
             return MaterialPageRoute(builder: (context) {
               final id = settings.arguments as String;
+
               return AssignmentDetailScreen(id);
             });
           default:

@@ -47,7 +47,7 @@ TextStyle checkDeadlineAssigment(Tugas assignment) {
       color: Colors.red,
       fontWeight: FontWeight.bold,
     );
-  } else if (datetimeAssignment.difference(dateTimeNow).inDays < 15) {
+  } else if (datetimeAssignment.difference(dateTimeNow).inDays < 4) {
     return const TextStyle(
       color: Colors.yellow,
       fontWeight: FontWeight.bold,
