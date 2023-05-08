@@ -54,13 +54,18 @@ class AssigmentApi {
     });
 
     print(response.body);
+    Map<String, dynamic> result = jsonDecode(response.body)['data'];
+    Tugas assigment = Tugas.fromJson(result);
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body)['data'];
-      Tugas assigment = Tugas.fromJson(result);
       return Right(assigment);
+    } else {
+      String message = "Tugas Tidak Ada";
+      if (assigment.foto == null) {
+        message = "no authorization";
+      }
+      return Left(message);
     }
-    return const Left("Tugas Tidak Ada");
   }
 
   Future getFileFromUrl(FileModel document) async {

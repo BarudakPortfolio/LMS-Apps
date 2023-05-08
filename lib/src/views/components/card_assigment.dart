@@ -17,11 +17,20 @@ class CardAssigment extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          AppRoutes.detailTugas,
-          arguments: assigment.id.toString(),
-        );
+        print("FOTO ${assigment.foto}");
+        if (assigment.foto == null) {
+          Navigator.pushNamed(
+            context,
+            AppRoutes.cameraAutorisasi,
+            arguments: assigment.id.toString(),
+          );
+        } else {
+          Navigator.pushNamed(
+            context,
+            AppRoutes.detailTugas,
+            arguments: assigment.id.toString(),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(10),

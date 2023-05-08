@@ -75,6 +75,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     )),
                 subtitle: Text("Layanan digitalisasi sekolah"),
               )),
+              const ListTile(
+                leading: Icon(FluentIcons.info_12_regular),
+                title: Text("Tentang"),
+              ),
               ListTile(
                 onTap: () {
                   Navigator.pop(context);
@@ -88,17 +92,49 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 leading: const Icon(FluentIcons.star_16_regular),
                 title: const Text("Reviews"),
               ),
+              const ListTile(
+                leading: Icon(FluentIcons.layer_20_regular),
+                title: Text("Versi 1.0.2-Alpha"),
+              ),
+              const Spacer(),
               ListTile(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 tileColor: Colors.red,
                 onTap: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, AppRoutes.login, (route) => false);
-                  Future.delayed(const Duration(seconds: 1), () {
-                    navIndex.changeIndex(0);
-                    auth.logout();
-                  });
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: const Text("Anda yakin keluar?"),
+                            content: const Text(
+                                "Akun anda akan keluar dari E-Learning apps ini"),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Kembali"),
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    AppRoutes.login,
+                                    (route) => false,
+                                  );
+                                  Future.delayed(const Duration(seconds: 1),
+                                      () {
+                                    navIndex.changeIndex(0);
+                                    auth.logout();
+                                  });
+                                },
+                                child: const Text("Keluar"),
+                              ),
+                            ],
+                          ));
                 },
                 leading: const Icon(
                   FluentIcons.sign_out_20_regular,
@@ -106,7 +142,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 title:
                     const Text("Logout", style: TextStyle(color: Colors.white)),
-              )
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -130,7 +167,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.menu),
             color: const Color(0xff06283D),
             onPressed: () {
               _scaffoldKey.currentState!.openEndDrawer();

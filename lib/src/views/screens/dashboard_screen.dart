@@ -135,12 +135,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             : [
                 Row(
                   children: [
-                    IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          FluentIcons.alert_12_regular,
-                          color: kGreenPrimary,
-                        )),
                     Padding(
                       padding: const EdgeInsets.only(right: 20.0),
                       child: GestureDetector(

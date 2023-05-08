@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:lms/src/core/style/theme.dart';
 
 import '../../core/common/constants.dart';
@@ -21,7 +22,9 @@ class _AssignmentDetailScreenState
   @override
   void initState() {
     Future.microtask(() async {
-      ref.watch(detailAssignmentNotifierProvider.notifier).getDetailAssignment(
+      await ref
+          .watch(detailAssignmentNotifierProvider.notifier)
+          .getDetailAssignment(
             widget.id,
           );
     });
