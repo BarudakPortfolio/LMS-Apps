@@ -134,19 +134,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   Card buildFormLogin() {
     final auth = ref.read(authNotifierProvider.notifier);
-    final state = ref.watch(authNotifierProvider);
     final userNotifier = ref.watch(userNotifierProvider.notifier);
     final collect = ref.watch(collectdataProvider);
+    final isLoading = ref.watch(authNotifierProvider).isLoading;
     loginHandle() async {
       FocusManager.instance.primaryFocus?.unfocus();
       if (_formKey.currentState!.validate()) {
         auth.login(usernameCtrl.text, passCtrl.text).then((value) async {
           if (value) {
+            if (!mounted) return;
+            Navigator.of(context).pushReplacementNamed(AppRoutes.main);
             await userNotifier.getUser().then(
                   (value) => collect.sendDataUser(value),
                 );
-            if (!mounted) return;
-            Navigator.of(context).pushReplacementNamed(AppRoutes.main);
           } else {
             if (!mounted) return;
             ScaffoldMessenger.of(context)
@@ -206,8 +206,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     const SizedBox(
                       height: 10,
                     ),
-                    Consumer(builder: (context, watch, child) {
-                      return ElevatedButton(
+                    ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.all(15),
                             backgroundColor: kGreenPrimary,
@@ -216,22 +215,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               10,
                             ))),
                         onPressed: loginHandle,
-                        child: Consumer(builder: (context, watch, child) {
-                          final isLoading =
-                              watch.watch(authNotifierProvider).isLoading;
-                          if (isLoading) {
-                            return const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            );
-                          }
-                          return const Text("Masuk");
-                        }),
-                      );
-                    })
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text("Masuk"))
                   ]),
             ),
           ),
