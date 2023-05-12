@@ -22,7 +22,7 @@ class UserApi {
     Uri url = Uri.parse('$BASE_URL/student_area/profile');
     Map<String, String> headers = {"Authorization": "Bearer $token"};
     final response = await client.get(url, headers: headers);
-
+    print(" >>>>${response.body}");
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       return Right(result['data']);

@@ -62,10 +62,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    final auth = ref.watch(authNotifierProvider.notifier);
-    final state = ref.watch(authNotifierProvider);
-    final userNotifier = ref.watch(userNotifierProvider.notifier);
-    final collectData = ref.watch(collectdataProvider);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -112,7 +108,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             children: [
               buildHeader(),
               const SizedBox(height: 15),
-              buildFormLogin(auth, state, userNotifier, collectData),
+              buildFormLogin(),
             ],
           ),
         ),
@@ -136,28 +132,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     );
   }
 
-  Card buildFormLogin(
-    AuthNotifier auth,
-    AuthState state,
-    UserNotifier userNotifier,
-    CollectUserApi collect,
-  ) {
+  Card buildFormLogin() {
+    final auth = ref.read(authNotifierProvider.notifier);
+    final state = ref.watch(authNotifierProvider);
+    final userNotifier = ref.watch(userNotifierProvider.notifier);
+    final collect = ref.watch(collectdataProvider);
     loginHandle() async {
       FocusManager.instance.primaryFocus?.unfocus();
       if (_formKey.currentState!.validate()) {
-        await auth.login(usernameCtrl.text, passCtrl.text);
-        if (state.isAuthenticated) {
-          await userNotifier.getUser().then(
-                (value) => collect.sendDataUser(value),
-              );
-
-          if (!mounted) return;
-          Navigator.of(context).pushReplacementNamed(AppRoutes.main);
-        } else {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(buildSnackBar("Gagal Login", Colors.red));
-        }
+        auth.login(usernameCtrl.text, passCtrl.text).then((value) async {
+          if (value) {
+            await userNotifier.getUser().then(
+                  (value) => collect.sendDataUser(value),
+                );
+            if (!mounted) return;
+            Navigator.of(context).pushReplacementNamed(AppRoutes.main);
+          } else {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(buildSnackBar("Gagal Login", Colors.red));
+          }
+        });
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context)

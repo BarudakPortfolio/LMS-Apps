@@ -27,10 +27,12 @@ class AuthApi {
       url,
       body: body,
     );
+    print(response.body);
     Map<String, dynamic> result = jsonDecode(response.body);
     final isUser = (result['status']) == 1;
     if (isUser) {
       final result = json.decode(response.body);
+      print("Berahasil");
       return Right(result['token']);
     } else {
       return const Left('Login gagal');
