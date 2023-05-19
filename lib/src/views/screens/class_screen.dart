@@ -212,7 +212,7 @@ class CardClass extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, AppRoutes.detailMateri,
-            arguments: kelas.id);
+            arguments: int.parse(kelas.id!));
       },
       child: Container(
         margin: const EdgeInsets.only(right: 20, left: 20, bottom: 10),

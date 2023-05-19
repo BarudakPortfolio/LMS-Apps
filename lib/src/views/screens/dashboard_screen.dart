@@ -2,7 +2,9 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:lms/src/core/style/theme.dart';
+import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -31,7 +33,14 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  DateTime _selectedDate = DateTime.now();
   late final ScrollController _scrollController;
+
+  void _selectDate(DateTime date) {
+    setState(() {
+      _selectedDate = date;
+    });
+  }
 
   @override
   void initState() {
@@ -45,6 +54,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     });
 
     super.initState();
+  }
+
+  List<String> getWeekdays() {
+    List<String> weekdays = [];
+    DateTime today = DateTime.now();
+    int mondayIndex = today.weekday - 1; // Hari Senin memiliki indeks 0
+    DateTime monday = today.subtract(Duration(days: mondayIndex));
+
+    for (int i = 0; i < 7; i++) {
+      DateTime currentDay = monday.add(Duration(days: i));
+      weekdays.add(currentDay.toString());
+    }
+
+    return weekdays;
   }
 
   @override
@@ -67,33 +90,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             final dashboardApi = watch.watch(dashboardNotifierProvider);
             final userApi = watch.watch(userNotifierProvider);
             if (dashboardApi.isLoading && userApi.isLoading) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Shimmer(
-                    child: Container(
-                      height: 10,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Shimmer(
-                    child: Container(
-                      height: 10,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                  ),
-                ],
-              );
+              return appBarLoading();
             }
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -154,201 +151,82 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           builder: (context, watch, child) {
             final state = watch.watch(dashboardNotifierProvider);
             if (state.isLoading) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Shimmer(
-                      child: Container(
-                        margin: const EdgeInsets.all(20),
-                        width: double.infinity,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey.shade300,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(
-                          3,
-                          (index) => Shimmer(
-                            child: Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.grey.shade300,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.all(20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Shimmer(
-                                  child: Container(
-                                width: 100,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                ),
-                              )),
-                              Shimmer(
-                                  child: Container(
-                                width: 70,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                ),
-                              )),
-                            ],
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: List.generate(5, (index) {
-                              if (index == 0) {
-                                return const SizedBox(width: 10);
-                              } else {
-                                return Shimmer(
-                                    child: Container(
-                                  height: 200,
-                                  width: 180,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.grey.shade300,
-                                  ),
-                                ));
-                              }
-                            }),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              );
+              return loadingDashboard();
             } else {
               if (state.data != null) {
                 int totalMateri = state.data!['materi']['total'];
                 int totalTugas = state.data!['tugas']['not_finished'];
                 int totalAbsensi = state.data!['absensi']['report']['hadir'];
-                return SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Column(
-                    children: [
-                      Container(
-                        // width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: kGreenPrimary,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Expanded(
-                              flex: 2,
-                              child: ListTile(
-                                title: Text("ELearning",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    )),
-                                subtitle: Text(
-                                  "Layanan Digitalisasi Sekolah",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child:
-                                  Image.asset("assets/images/bg_book_lamp.png"),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CardSummary(
-                              "Materi",
-                              totalMateri,
-                              onTap: () {
-                                ref.watch(navProvider.notifier).changeIndex(2);
-                              },
-                            ),
-                            CardSummary(
-                              "Tugas",
-                              totalTugas,
-                              onTap: () {
-                                ref.watch(navProvider.notifier).changeIndex(3);
-                              },
-                            ),
-                            CardSummary(
-                              "Hadir",
-                              totalAbsensi,
-                              onTap: () {
-                                ref.watch(navProvider.notifier).changeIndex(0);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          ListTile(
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 30),
-                            title: const Text(
-                              "Kelas Hari ini",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            trailing: TextButton(
-                              onPressed: () {
-                                ref.watch(navProvider.notifier).changeIndex(1);
-                              },
-                              child: const Text("Lihat Semua"),
-                            ),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: CustomScrollView(
+                    slivers: [
+                      const SliverToBoxAdapter(
+                        child: Text(
+                          'Hari ini',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                          SizedBox(
-                            width: size.width,
-                            height: 250,
-                            child: ListView.separated(
-                                physics: const BouncingScrollPhysics(),
-                                scrollDirection: Axis.horizontal,
-                                itemCount: 5,
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
-                                itemBuilder: (context, index) {
-                                  if (index == 0) {
-                                    return const SizedBox(width: 10);
-                                  } else {
-                                    return const CardClass();
-                                  }
-                                }),
-                          )
-                        ],
+                        ),
+                      ),
+                      const SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 20,
+                        ),
+                      ),
+                      SliverGrid.builder(
+                        itemCount: 7,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                childAspectRatio: 4 / 5,
+                                crossAxisCount: DateTime.daysPerWeek,
+                                crossAxisSpacing: 10),
+                        itemBuilder: (context, index) {
+                          DateTime today = DateTime.now();
+                          DateTime sevenDays =
+                              DateTime.now().add(const Duration(days: 7));
+
+                          List<DateTime> listDate = [];
+                          for (var date = today;
+                              date.isBefore(sevenDays);
+                              date = date.add(const Duration(days: 1))) {
+                            listDate.add(date);
+                          }
+
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7),
+                              color: formatBornDate(getWeekdays()[index]) ==
+                                      formatBornDate(today.toString())
+                                  ? const Color(0xff5CB4D2)
+                                  : const Color(0xffd9d9d9),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  formatDayToNumber(getWeekdays()[index]),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  formatDay(getWeekdays()[index])
+                                      .substring(0, 3),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 30,
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: buildDashboard(
+                            totalMateri, totalTugas, totalAbsensi, size),
                       )
                     ],
                   ),
@@ -360,6 +238,208 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           },
         ),
       ),
+    );
+  }
+
+  Column buildDashboard(
+      int totalMateri, int totalTugas, int totalAbsensi, Size size) {
+    return Column(
+      children: [
+        CardSummary(
+          "Materi",
+          totalMateri,
+          onTap: () {
+            ref.watch(navProvider.notifier).changeIndex(2);
+          },
+          icon: Icon(
+            Icons.ac_unit,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        CardSummary(
+          "Tugas",
+          totalTugas,
+          onTap: () {
+            ref.watch(navProvider.notifier).changeIndex(3);
+          },
+          icon: Icon(
+            Icons.ac_unit,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        CardSummary(
+          "Hadir",
+          totalAbsensi,
+          onTap: () {
+            ref.watch(navProvider.notifier).changeIndex(0);
+          },
+          icon: Icon(
+            Icons.ac_unit,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Kelas Hari ini",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    ref.watch(navProvider.notifier).changeIndex(1);
+                  },
+                  child: const Text(
+                    "Lihat Semua",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              width: size.width,
+              height: 250,
+              child: ListView.separated(
+                  physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 5,
+                  separatorBuilder: (context, index) => const SizedBox(
+                        width: 20,
+                      ),
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return const SizedBox(width: 0);
+                    } else {
+                      return const CardClass();
+                    }
+                  }),
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  SingleChildScrollView loadingDashboard() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Shimmer(
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              width: double.infinity,
+              height: 120,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.grey.shade300,
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                3,
+                (index) => Shimmer(
+                  child: Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Shimmer(
+                        child: Container(
+                      width: 100,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                      ),
+                    )),
+                    Shimmer(
+                        child: Container(
+                      width: 70,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(5, (index) {
+                    if (index == 0) {
+                      return const SizedBox(width: 10);
+                    } else {
+                      return Shimmer(
+                          child: Container(
+                        height: 200,
+                        width: 180,
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey.shade300,
+                        ),
+                      ));
+                    }
+                  }),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Column appBarLoading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Shimmer(
+          child: Container(
+            height: 10,
+            width: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey.shade300,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Shimmer(
+          child: Container(
+            height: 10,
+            width: 80,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey.shade300,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

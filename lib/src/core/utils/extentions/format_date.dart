@@ -12,8 +12,14 @@ formatBornDate(String date) {
   return formatted;
 }
 
-formatDay(String date) {
+String formatDay(String date) {
   var format = DateFormat('EEEE', 'id_ID');
+  var formatted = format.format(DateTime.parse(date));
+  return formatted;
+}
+
+String formatDayToNumber(String date) {
+  var format = DateFormat('dd', 'id_ID');
   var formatted = format.format(DateTime.parse(date));
   return formatted;
 }
