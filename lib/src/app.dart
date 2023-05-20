@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lms/src/views/screens/assignment_detail_screen.dart';
-import 'package:lms/src/views/screens/authorization_camera_screen.dart';
-import 'package:lms/src/views/screens/materi_detail_screen.dart';
 
 import 'core/routes/app_routes.dart';
 import 'core/style/theme.dart';

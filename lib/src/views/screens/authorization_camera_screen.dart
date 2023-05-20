@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 import 'package:lms/src/features/autorisasi/data/autorisasi_api.dart';
 import 'package:lms/src/features/autorisasi/provider/autorisasi_notifier.dart';

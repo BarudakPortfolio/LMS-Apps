@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,15 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:lms/src/core/utils/extentions/string_capitalize.dart';
 import 'package:lms/src/features/kelas/provider/class_notifier.dart';
 import 'package:lms/src/models/kelas.dart';
-import 'package:lms/src/views/components/card_class.dart';
 import 'package:time_planner/time_planner.dart';
 import 'package:lms/src/core/utils/extentions/remove_scroll_grow.dart';
 
-import '../../core/routes/app_routes.dart';
 import '../../core/style/theme.dart';
 import '../../core/utils/extentions/format_date.dart';
-import '../../core/utils/extentions/nama_dosen.dart';
-import 'main_screen.dart';
 
 class ClassScreen extends ConsumerStatefulWidget {
   const ClassScreen({super.key});
@@ -105,7 +99,6 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                           return CardClass(
                             kelas: kelasList[index],
                           );
-                          ;
                         },
                       );
                     } else {

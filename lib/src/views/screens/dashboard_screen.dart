@@ -2,7 +2,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
@@ -33,14 +32,7 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-  DateTime _selectedDate = DateTime.now();
   late final ScrollController _scrollController;
-
-  void _selectDate(DateTime date) {
-    setState(() {
-      _selectedDate = date;
-    });
-  }
 
   @override
   void initState() {
@@ -97,7 +89,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  userApi.user?.name ?? 'No Name',
+                  'Hi, ${userApi.user?.name}' ?? 'No Name',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -160,6 +152,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: CustomScrollView(
+                    controller: _scrollController,
                     slivers: [
                       const SliverToBoxAdapter(
                         child: Text(
@@ -172,7 +165,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ),
                       const SliverToBoxAdapter(
                         child: SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                       ),
                       SliverGrid.builder(
@@ -219,9 +212,58 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           );
                         },
                       ),
+                      SliverToBoxAdapter(
+                          child: Container(
+                        margin: const EdgeInsets.only(top: 10),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                children: [
+                                  const Text(
+                                    'Jam Masuk',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(state.data!['absensi']['today']
+                                      ['jam_masuk'])
+                                ],
+                              ),
+                              const SizedBox(
+                                  height: 20, child: VerticalDivider()),
+                              Column(
+                                children: [
+                                  const Text('Jam Keluar',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(state.data!['absensi']['today']
+                                      ['jam_keluar'])
+                                ],
+                              ),
+                            ]),
+                      )),
                       const SliverToBoxAdapter(
                         child: SizedBox(
-                          height: 30,
+                          height: 20,
+                        ),
+                      ),
+                      const SliverToBoxAdapter(
+                        child: Text(
+                          'Dashboard',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 10,
                         ),
                       ),
                       SliverToBoxAdapter(

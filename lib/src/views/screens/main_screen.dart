@@ -7,12 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/features/kelas/provider/class_notifier.dart';
 import 'package:lms/src/views/screens/materi_screen.dart';
 import 'package:lms/src/views/screens/profile_screen.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../features/dashboard/provider/dashboard_provider.dart';
 import '../../features/materi/provider/materi/materi_provider.dart';
 import '../../features/user/provider/user_provider.dart';
-import '../../models/user.dart';
 import 'assignment_screen.dart';
 import 'class_screen.dart';
 import 'dashboard_screen.dart';

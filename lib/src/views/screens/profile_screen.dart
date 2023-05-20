@@ -8,7 +8,6 @@ import 'package:lms/src/features/collect_user/data/collect_user_api.dart';
 import 'package:lms/src/features/user/provider/user_state.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
 
-import '../../core/routes/app_routes.dart';
 import '../../core/style/theme.dart';
 import '../../features/auth/provider/auth_provider.dart';
 import '../../features/user/provider/user_provider.dart';

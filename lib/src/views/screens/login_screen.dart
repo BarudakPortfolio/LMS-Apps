@@ -4,16 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lms/src/features/auth/provider/auth_notifier.dart';
-import 'package:lms/src/features/auth/provider/auth_state.dart';
 import 'package:lms/src/features/collect_user/data/collect_user_api.dart';
-import 'package:lms/src/features/user/provider/user_notifier.dart';
 import 'package:lms/src/features/user/provider/user_provider.dart';
-import 'package:lms/src/features/user/provider/user_state.dart';
 import 'package:lms/src/views/components/snackbar_widget.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../core/routes/app_routes.dart';
 import '../../core/style/theme.dart';
 import '../../features/auth/provider/auth_provider.dart';
 import '../components/form_input.dart';

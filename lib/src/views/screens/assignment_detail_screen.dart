@@ -1,11 +1,9 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../core/common/constants.dart';
 import '../../features/assigment/provider/assigment_detail/assigment_detail_provider.dart';
 import '../components/jumbotron_assignment.dart';
 

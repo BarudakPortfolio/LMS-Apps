@@ -5,7 +5,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:vector_math/vector_math.dart' as vector;
 import 'dart:math' as math;
 import 'package:lms/src/features/storage/service/storage.dart';

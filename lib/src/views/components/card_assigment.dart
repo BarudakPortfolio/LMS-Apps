@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lms/src/core/routes/app_routes.dart';
-import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 
 import '../../core/utils/extentions/check_status_tugas.dart';
 import '../../core/utils/extentions/format_date.dart';
