@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:lms/src/core/style/theme.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../core/common/constants.dart';
 import '../../features/assigment/provider/assigment_detail/assigment_detail_provider.dart';
@@ -91,10 +92,9 @@ class _AssignmentDetailScreenState
         ],
       ),
       body: state.isLoading && state.data == null
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: kGreenPrimary,
-              ),
+          ? Center(
+              child: LoadingAnimationWidget.waveDots(
+                  size: 40, color: Theme.of(context).primaryColor),
             )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

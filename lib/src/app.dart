@@ -12,38 +12,14 @@ class MainApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
+    final goRouter = ref.watch(goRouterProvider);
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: "LMS koCak",
-      routes: AppRoutes.routes,
-      initialRoute: AppRoutes.splash,
       theme: lightTheme,
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case AppRoutes.detailMateri:
-            return MaterialPageRoute(builder: (context) {
-              final id = settings.arguments as int;
-              return MateriDetailScreen(id: id);
-            });
-          case AppRoutes.cameraAutorisasi:
-            return MaterialPageRoute(builder: (context) {
-              Map<String, dynamic> argument =
-                  settings.arguments as Map<String, dynamic>;
-              print("ARGUMENT >>> $argument");
-              return AuthorizationCameraScreen(
-                argument['id'].toString(),
-                isTugas: argument['isTugas'],
-              );
-            });
-          case AppRoutes.detailTugas:
-            return MaterialPageRoute(builder: (context) {
-              final id = settings.arguments as String;
-
-              return AssignmentDetailScreen(id);
-            });
-          default:
-        }
-      },
+      routeInformationParser: goRouter.goRouter.routeInformationParser,
+      routerDelegate: goRouter.goRouter.routerDelegate,
+      routeInformationProvider: goRouter.goRouter.routeInformationProvider,
     );
   }
 }

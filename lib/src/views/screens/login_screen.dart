@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lms/src/features/auth/provider/auth_notifier.dart';
 import 'package:lms/src/features/auth/provider/auth_state.dart';
 import 'package:lms/src/features/collect_user/data/collect_user_api.dart';
@@ -10,6 +11,7 @@ import 'package:lms/src/features/user/provider/user_notifier.dart';
 import 'package:lms/src/features/user/provider/user_provider.dart';
 import 'package:lms/src/features/user/provider/user_state.dart';
 import 'package:lms/src/views/components/snackbar_widget.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../core/routes/app_routes.dart';
 import '../../core/style/theme.dart';
@@ -142,15 +144,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       if (_formKey.currentState!.validate()) {
         auth.login(usernameCtrl.text, passCtrl.text).then((value) async {
           if (value) {
-            if (!mounted) return;
-            Navigator.of(context).pushReplacementNamed(AppRoutes.main);
+            GoRouter.of(context).goNamed('main');
             await userNotifier.getUser().then(
                   (value) => collect.sendDataUser(value),
                 );
           } else {
             if (!mounted) return;
-            ScaffoldMessenger.of(context)
-                .showSnackBar(buildSnackBar("Gagal Login", Colors.red));
+            ScaffoldMessenger.of(context).showSnackBar(
+                buildSnackBar("NIM atau password salah", Colors.red));
           }
         });
       } else {
@@ -216,12 +217,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             ))),
                         onPressed: loginHandle,
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 20,
                                 width: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
+                                child: LoadingAnimationWidget.waveDots(
+                                    size: 30, color: Colors.white),
                               )
                             : const Text("Masuk"))
                   ]),

@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/core/utils/extentions/remove_scroll_grow.dart';
 import 'package:lms/src/features/collect_user/data/collect_user_api.dart';
@@ -120,15 +121,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   backgroundColor: Colors.red,
                                 ),
                                 onPressed: () {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    AppRoutes.login,
-                                    (route) => false,
-                                  );
                                   Future.delayed(const Duration(seconds: 1),
                                       () {
+                                    Navigator.pop(context);
                                     navIndex.changeIndex(0);
                                     auth.logout();
+                                    context.goNamed('login');
                                   });
                                 },
                                 child: const Text("Keluar"),

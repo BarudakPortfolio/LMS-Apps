@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 
@@ -21,20 +22,12 @@ class CardAssigment extends ConsumerWidget {
       onTap: () {
         print("FOTO ${assigment.foto}");
         if (assigment.foto == null) {
-          Navigator.pushNamed(
-            context,
-            AppRoutes.cameraAutorisasi,
-            arguments: {
-              "id": assigment.id.toString(),
-              "isTugas": true,
-            },
-          );
+          context.pushNamed('camera-auth', pathParameters: {
+            'is-assignment': 'true',
+          });
         } else {
-          Navigator.pushNamed(
-            context,
-            AppRoutes.detailTugas,
-            arguments: assigment.id.toString(),
-          );
+          context.pushNamed('assignment-detail',
+              pathParameters: {'id': assigment.id.toString()});
         }
       },
       child: Container(

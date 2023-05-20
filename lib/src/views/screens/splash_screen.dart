@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:vector_math/vector_math.dart' as vector;
 import 'dart:math' as math;
@@ -60,9 +61,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   storage.readAll().then((user) {
                     auth.login(user['username'], user['password']);
                   });
-                  Navigator.pushReplacementNamed(context, AppRoutes.main);
+                  context.goNamed('main');
                 } else {
-                  Navigator.pushReplacementNamed(context, AppRoutes.login);
+                  context.goNamed('login');
                 }
               },
             );

@@ -209,73 +209,76 @@ class CardClass extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, AppRoutes.detailMateri,
-            arguments: int.parse(kelas.id!));
-      },
-      child: Container(
-        margin: const EdgeInsets.only(right: 20, left: 20, bottom: 10),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white,
+    return Container(
+      margin: const EdgeInsets.only(right: 20, left: 20, bottom: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Material(
+        child: InkWell(
+          onTap: () {},
           borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('${kelas.nama}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          )),
-                      Text('${kelas.namaGuru}',
-                          style: TextStyle(color: Colors.grey[500])),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: kGreenPrimary,
-                  ),
-                  child: Text(
-                    'Ruangan ${kelas.ruangan!}',
-                    style: const TextStyle(fontSize: 10, color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(FluentIcons.calendar_clock_20_regular),
-                    const SizedBox(width: 3),
-                    Text(
-                      '${kelas.hari!.toTitleCase()}, ${kelas.waktuMulai!.substring(0, 5)} - ${kelas.waktuSelesai!.substring(0, 5)}',
-                      style: const TextStyle(fontSize: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${kelas.nama}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              )),
+                          Text('${kelas.namaGuru}',
+                              style: TextStyle(color: Colors.grey[500])),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kGreenPrimary,
+                      ),
+                      child: Text(
+                        'Ruangan ${kelas.ruangan!}',
+                        style:
+                            const TextStyle(fontSize: 10, color: Colors.white),
+                      ),
+                    )
+                  ],
+                ),
+                const Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(FluentIcons.calendar_clock_20_regular),
+                        const SizedBox(width: 3),
+                        Text(
+                          '${kelas.hari!.toTitleCase()}, ${kelas.waktuMulai!.substring(0, 5)} - ${kelas.waktuSelesai!.substring(0, 5)}',
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

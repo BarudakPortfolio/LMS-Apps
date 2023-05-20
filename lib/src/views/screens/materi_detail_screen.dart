@@ -2,12 +2,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lms/src/core/common/constants.dart';
 import 'package:lms/src/core/routes/app_routes.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/features/materi/data/materi_api.dart';
 import 'package:lms/src/views/components/webview.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../features/materi/provider/materi_detail/materi_detail_provider.dart';
@@ -30,11 +32,10 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
           .getMateriDetail(widget.id)
           .then((value) {
         if (!value) {
-          Navigator.pushReplacementNamed(
-            context,
-            AppRoutes.cameraAutorisasi,
-            arguments: widget.id.toString(),
-          );
+          context.pushNamed('camera-auth', pathParameters: {
+            'id': widget.id.toString(),
+            'is-assignment': 'false'
+          });
         }
       });
       if (await Permission.manageExternalStorage.isDenied) {
@@ -101,10 +102,9 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
         ],
       ),
       body: materi.data == null
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: kGreenPrimary,
-              ),
+          ? Center(
+              child: LoadingAnimationWidget.waveDots(
+                  size: 40, color: Theme.of(context).primaryColor),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),

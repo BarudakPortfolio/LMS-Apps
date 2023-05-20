@@ -132,11 +132,11 @@ class _AuthorizationCameraScreenState
                           ref
                               .watch(materiNotifierProvider.notifier)
                               .getMateri(newClassId: idKelasMateri);
-                          Navigator.pushReplacementNamed(
-                            context,
-                            AppRoutes.detailMateri,
-                            arguments: int.parse(widget.id),
-                          );
+                          // Navigator.pushReplacementNamed(
+                          //   context,
+                          //   AppRoutes.detailMateri,
+                          //   arguments: int.parse(widget.id),
+                          // );
                         } else {
                           ref
                               .watch(assigmentNotifierProvider.notifier)
@@ -144,11 +144,11 @@ class _AuthorizationCameraScreenState
                                 newStatus: status,
                                 newMapelId: idKelas,
                               );
-                          Navigator.pushReplacementNamed(
-                            context,
-                            AppRoutes.detailTugas,
-                            arguments: widget.id,
-                          );
+                          // Navigator.pushReplacementNamed(
+                          //   context,
+                          //   AppRoutes.detailTugas,
+                          //   arguments: widget.id,
+                          // );
                         }
                       }
                     });
