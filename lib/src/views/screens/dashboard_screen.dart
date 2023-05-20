@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
+import 'package:lms/src/features/kelas/data/class_api.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -343,24 +344,25 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
               ],
             ),
-            SizedBox(
-              width: size.width,
-              height: 250,
-              child: ListView.separated(
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5,
-                  separatorBuilder: (context, index) => const SizedBox(
-                        width: 20,
-                      ),
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return const SizedBox(width: 0);
-                    } else {
-                      return const CardClass();
-                    }
-                  }),
-            )
+            Text('Coming soon :)....')
+            // SizedBox(
+            //   width: size.width,
+            //   height: 250,
+            //   child: ListView.separated(
+            //       physics: const BouncingScrollPhysics(),
+            //       scrollDirection: Axis.horizontal,
+            //       itemCount: 5,
+            //       separatorBuilder: (context, index) => const SizedBox(
+            //             width: 20,
+            //           ),
+            //       itemBuilder: (context, index) {
+            //         if (index == 0) {
+            //           return const SizedBox(width: 0);
+            //         } else {
+            //           return const CardClass();
+            //         }
+            //       }),
+            // )
           ],
         )
       ],
