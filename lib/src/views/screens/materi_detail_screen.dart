@@ -31,10 +31,13 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
           .getMateriDetail(widget.id)
           .then((value) {
         if (!value) {
-          context.pushNamed('camera-auth', pathParameters: {
-            'id': widget.id.toString(),
-            'is-assignment': 'false'
-          });
+          context.pushReplacementNamed(
+            'camera-auth',
+            pathParameters: {
+              'id': widget.id.toString(),
+            },
+            extra: false,
+          );
         }
       });
       if (await Permission.manageExternalStorage.isDenied) {

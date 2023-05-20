@@ -10,8 +10,8 @@ class AssignmentDetailNotifier extends StateNotifier<AssignmentDetailState> {
       : super(AssignmentDetailState.noState());
 
   getDetailAssignment(String idTugas) async {
-    final token = await storage.read('token');
     state = AssignmentDetailState.loading();
+    final token = await storage.read('token');
     final result = await assignmentApi.getDetailAssigment(token, idTugas);
     result.fold(
       (l) => state = AssignmentDetailState.error(l),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/utils/extentions/check_status_tugas.dart';
 import '../../core/utils/extentions/format_date.dart';
+import '../../features/assigment/provider/assigment_detail/assigment_detail_provider.dart';
 import '../../models/tugas.dart';
 import 'banner_grade.dart';
 
@@ -18,14 +19,19 @@ class CardAssigment extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
       onTap: () {
+        print(assigment.id);
         print("FOTO ${assigment.foto}");
         if (assigment.foto == null) {
-          context.pushNamed('camera-auth', pathParameters: {
-            'is-assignment': 'true',
-          });
+          context.pushNamed(
+            'camera-auth',
+            pathParameters: {'id': assigment.id.toString()},
+            extra: true,
+          );
         } else {
-          context.pushNamed('assignment-detail',
-              pathParameters: {'id': assigment.id.toString()});
+          context.pushNamed(
+            'assignment-detail',
+            pathParameters: {'id': assigment.id.toString()},
+          );
         }
       },
       child: Container(

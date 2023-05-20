@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
+import 'package:lms/src/features/dashboard/provider/dashboard_state.dart';
 import 'package:lms/src/features/kelas/data/class_api.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
@@ -76,7 +79,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ? Colors.white
             : Theme.of(context).scaffoldBackgroundColor,
         leadingWidth: 250,
-        toolbarHeight: 100,
+        // toolbarHeight: 100,
         leading: Padding(
           padding: const EdgeInsets.only(left: 20),
           child: Consumer(builder: (context, watch, child) {
@@ -90,7 +93,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Hi, ${userApi.user?.name}' ?? 'No Name',
+                  'Hi, ${userApi.user?.name ?? 'No Name'}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -150,129 +153,80 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 int totalMateri = state.data!['materi']['total'];
                 int totalTugas = state.data!['tugas']['not_finished'];
                 int totalAbsensi = state.data!['absensi']['report']['hadir'];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: CustomScrollView(
-                    controller: _scrollController,
-                    slivers: [
-                      const SliverToBoxAdapter(
-                        child: Text(
-                          'Hari ini',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                return CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 10,
+                      ),
+                    ),
+                    buildReport(state),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 10,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Dashboard',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildDashboard(
+                                totalMateri, totalTugas, totalAbsensi, size),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                        ),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text(
+                            "Kelas Hari ini",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          trailing: TextButton(
+                            onPressed: () {
+                              ref.watch(navProvider.notifier).changeIndex(1);
+                            },
+                            child: const Text(
+                              "Lihat Semua",
+                              style: TextStyle(color: Colors.black),
+                            ),
                           ),
                         ),
                       ),
-                      const SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 10,
-                        ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: buildClassToday(),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 50,
                       ),
-                      SliverGrid.builder(
-                        itemCount: 7,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                childAspectRatio: 4 / 5,
-                                crossAxisCount: DateTime.daysPerWeek,
-                                crossAxisSpacing: 10),
-                        itemBuilder: (context, index) {
-                          DateTime today = DateTime.now();
-                          DateTime sevenDays =
-                              DateTime.now().add(const Duration(days: 7));
-
-                          List<DateTime> listDate = [];
-                          for (var date = today;
-                              date.isBefore(sevenDays);
-                              date = date.add(const Duration(days: 1))) {
-                            listDate.add(date);
-                          }
-
-                          return Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7),
-                              color: formatBornDate(getWeekdays()[index]) ==
-                                      formatBornDate(today.toString())
-                                  ? const Color(0xff5CB4D2)
-                                  : const Color(0xffd9d9d9),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  formatDayToNumber(getWeekdays()[index]),
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  formatDay(getWeekdays()[index])
-                                      .substring(0, 3),
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      SliverToBoxAdapter(
-                          child: Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Column(
-                                children: [
-                                  const Text(
-                                    'Jam Masuk',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(state.data!['absensi']['today']
-                                      ['jam_masuk'])
-                                ],
-                              ),
-                              const SizedBox(
-                                  height: 20, child: VerticalDivider()),
-                              Column(
-                                children: [
-                                  const Text('Jam Keluar',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  Text(state.data!['absensi']['today']
-                                      ['jam_keluar'])
-                                ],
-                              ),
-                            ]),
-                      )),
-                      const SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 20,
-                        ),
-                      ),
-                      const SliverToBoxAdapter(
-                        child: Text(
-                          'Dashboard',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 10,
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: buildDashboard(
-                            totalMateri, totalTugas, totalAbsensi, size),
-                      )
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               } else {
                 return Text(state.message.toString());
@@ -284,9 +238,110 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  Column buildDashboard(
+  SliverToBoxAdapter buildReport(DashboardState state) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Hari ini',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            GridView.builder(
+              shrinkWrap: true,
+              itemCount: 7,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 4 / 5,
+                  crossAxisCount: DateTime.daysPerWeek,
+                  crossAxisSpacing: 10),
+              itemBuilder: (context, index) {
+                DateTime today = DateTime.now();
+                DateTime sevenDays =
+                    DateTime.now().add(const Duration(days: 7));
+
+                List<DateTime> listDate = [];
+                for (var date = today;
+                    date.isBefore(sevenDays);
+                    date = date.add(const Duration(days: 1))) {
+                  listDate.add(date);
+                }
+
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7),
+                    color: formatBornDate(getWeekdays()[index]) ==
+                            formatBornDate(today.toString())
+                        ? const Color(0xff5CB4D2)
+                        : const Color(0xffd9d9d9),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        formatDayToNumber(getWeekdays()[index]),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        formatDay(getWeekdays()[index]).substring(0, 3),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        const Text(
+                          'Jam Masuk',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(state.data!['absensi']['today']['jam_masuk'])
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                      child: VerticalDivider(),
+                    ),
+                    Column(
+                      children: [
+                        const Text('Jam Keluar',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            )),
+                        Text(state.data?['absensi']['today']['jam_keluar'] ??
+                            "-")
+                      ],
+                    ),
+                  ]),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Row buildDashboard(
       int totalMateri, int totalTugas, int totalAbsensi, Size size) {
-    return Column(
+    return Row(
       children: [
         CardSummary(
           "Materi",
@@ -321,50 +376,70 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             color: Theme.of(context).primaryColor,
           ),
         ),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Kelas Hari ini",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+      ],
+    );
+  }
+
+  Widget buildClassToday() {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          height: 200,
+          // color: kGreenPrimary,
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(4, (index) {
+                    if (index == 0) {
+                      return const SizedBox(width: 20);
+                    }
+                    return const Padding(
+                      padding: EdgeInsets.only(right: 25.0),
+                      child: CardClass(),
+                    );
+                  }).toList(),
+                ),
+              ),
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        FluentIcons.airplane_take_off_24_filled,
+                        size: 40,
+                      ),
+                      Text('Coming soon')
+                    ],
                   ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    ref.watch(navProvider.notifier).changeIndex(1);
-                  },
-                  child: const Text(
-                    "Lihat Semua",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ],
-            ),
-            Text('Coming soon :)....')
-            // SizedBox(
-            //   width: size.width,
-            //   height: 250,
-            //   child: ListView.separated(
-            //       physics: const BouncingScrollPhysics(),
-            //       scrollDirection: Axis.horizontal,
-            //       itemCount: 5,
-            //       separatorBuilder: (context, index) => const SizedBox(
-            //             width: 20,
-            //           ),
-            //       itemBuilder: (context, index) {
-            //         if (index == 0) {
-            //           return const SizedBox(width: 0);
-            //         } else {
-            //           return const CardClass();
-            //         }
-            //       }),
-            // )
-          ],
+              )
+            ],
+          ),
         )
+        // SizedBox(
+        //   width: size.width,
+        //   height: 250,
+        //   child: ListView.separated(
+        //       physics: const BouncingScrollPhysics(),
+        //       scrollDirection: Axis.horizontal,
+        //       itemCount: 5,
+        //       separatorBuilder: (context, index) => const SizedBox(
+        //             width: 20,
+        //           ),
+        //       itemBuilder: (context, index) {
+        //         if (index == 0) {
+        //           return const SizedBox(width: 0);
+        //         } else {
+        //           return const CardClass();
+        //         }
+        //       }),
+        // )
       ],
     );
   }
@@ -374,26 +449,31 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       child: Column(
         children: [
           Shimmer(
-            child: Container(
-              margin: const EdgeInsets.all(20),
-              width: double.infinity,
-              height: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey.shade300,
-              ),
-            ),
-          ),
+              child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(
+                    7,
+                    (index) => Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey.shade300,
+                          ),
+                        )).toList()),
+          )),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(
-                3,
+                2,
                 (index) => Shimmer(
                   child: Container(
-                    height: 100,
-                    width: 100,
+                    height: 70,
+                    width: 150,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.grey.shade300,
@@ -402,6 +482,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
               ),
             ),
+          ),
+          const SizedBox(height: 20),
+          Column(
+            children: List.generate(
+                3,
+                (index) => Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 5,
+                      ),
+                      height: 100,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey.shade300,
+                      ),
+                    )),
           ),
           Column(
             children: [

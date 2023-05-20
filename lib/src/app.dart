@@ -12,7 +12,7 @@ class MainApp extends ConsumerWidget {
     final goRouter = ref.watch(goRouterProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: "LMS koCak",
+      title: "LMS ",
       theme: lightTheme,
       routeInformationParser: goRouter.goRouter.routeInformationParser,
       routerDelegate: goRouter.goRouter.routerDelegate,

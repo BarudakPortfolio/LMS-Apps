@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 import 'package:lms/src/features/autorisasi/data/autorisasi_api.dart';
 import 'package:lms/src/features/autorisasi/provider/autorisasi_notifier.dart';
@@ -16,7 +17,11 @@ import '../../core/style/theme.dart';
 class AuthorizationCameraScreen extends ConsumerStatefulWidget {
   final String id;
   final bool isTugas;
-  const AuthorizationCameraScreen(this.id, {required this.isTugas, super.key});
+  const AuthorizationCameraScreen(
+    this.id, {
+    required this.isTugas,
+    super.key,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -131,11 +136,8 @@ class _AuthorizationCameraScreenState
                           ref
                               .watch(materiNotifierProvider.notifier)
                               .getMateri(newClassId: idKelasMateri);
-                          // Navigator.pushReplacementNamed(
-                          //   context,
-                          //   AppRoutes.detailMateri,
-                          //   arguments: int.parse(widget.id),
-                          // );
+                          context.pushReplacementNamed("materi-detail",
+                              pathParameters: {"id": widget.id.toString()});
                         } else {
                           ref
                               .watch(assigmentNotifierProvider.notifier)
@@ -143,11 +145,10 @@ class _AuthorizationCameraScreenState
                                 newStatus: status,
                                 newMapelId: idKelas,
                               );
-                          // Navigator.pushReplacementNamed(
-                          //   context,
-                          //   AppRoutes.detailTugas,
-                          //   arguments: widget.id,
-                          // );
+                          context.pushReplacementNamed(
+                            "assignment-detail",
+                            pathParameters: {'id': widget.id},
+                          );
                         }
                       }
                     });

@@ -67,11 +67,11 @@ class AppRoutes {
   static Page _authorizationCameraPageBuilder(
       BuildContext context, GoRouterState state) {
     String id = state.pathParameters['id'] ?? '0';
-    final isAssignment = state.pathParameters['is-assignment'];
+    final isAssignment = state.extra as bool;
     return MaterialPage(
       child: AuthorizationCameraScreen(
         id,
-        isTugas: isAssignment!.toLowerCase() == 'true',
+        isTugas: isAssignment,
       ),
     );
   }

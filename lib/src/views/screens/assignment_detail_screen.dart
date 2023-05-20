@@ -100,7 +100,8 @@ class _AssignmentDetailScreenState
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      JumbotronAssignment(assignment: assignment),
+                      if (assignment != null)
+                        JumbotronAssignment(assignment: assignment),
                     ],
                   )),
             ),
