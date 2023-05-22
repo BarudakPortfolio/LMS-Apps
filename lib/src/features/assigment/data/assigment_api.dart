@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/io_client.dart';
 import 'package:lms/src/core/common/constants.dart';
@@ -9,7 +11,9 @@ import 'package:lms/src/features/http/provider/http_provider.dart';
 import 'package:lms/src/models/tugas.dart';
 import 'package:open_file/open_file.dart' as OpenFile;
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../../core/style/theme.dart';
 import '../../../models/file.dart';
 
 final assigmentProvider = Provider<AssigmentApi>((ref) {
@@ -81,8 +85,39 @@ class AssigmentApi {
       File filePath = File("${dir.path}/$nameFile");
 
       File fileAsPath = await filePath.writeAsBytes(bytesBody);
-      final result = await OpenFile.OpenFile.open(fileAsPath.path);
-      print(result.message);
+      await OpenFile.OpenFile.open(fileAsPath.path);
     }
+  }
+
+  Future<Map<String, dynamic>> addArchiveAssignment() async {
+    Map<String, dynamic>? archiveAssigment;
+    var uuid = const Uuid();
+    String id = uuid.v1();
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      String nameFile = file.path.split('/').last;
+      archiveAssigment = {
+        "id": id,
+        "nama_file": nameFile,
+        "path": file.path,
+        "widget": Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+              side: const BorderSide(width: 2, color: kGreenPrimary)),
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: ListTile(
+            onTap: () async {
+              await OpenFile.OpenFile.open(file.path);
+            },
+            leading: const Icon(
+              Icons.file_open_rounded,
+            ),
+            title: Text(nameFile),
+          ),
+        )
+      };
+    }
+    return archiveAssigment!;
   }
 }

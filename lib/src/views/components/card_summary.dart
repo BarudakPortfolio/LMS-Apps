@@ -1,3 +1,4 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 class CardSummary extends StatelessWidget {
@@ -10,18 +11,19 @@ class CardSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
-          margin: const EdgeInsets.symmetric(horizontal: 5),
-          // width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+      margin: const EdgeInsets.all(5),
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          icon,
+          Column(
             children: [
               Text(value.toString(),
                   style: const TextStyle(
@@ -31,7 +33,11 @@ class CardSummary extends StatelessWidget {
               Text(title),
             ],
           ),
-        ),
+          IconButton(
+            onPressed: onTap,
+            icon: const Icon(FluentIcons.arrow_right_12_regular),
+          )
+        ],
       ),
     );
   }

@@ -197,25 +197,38 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           horizontal: 20.0,
                         ),
                         child: ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: const Text(
-                            "Kelas Hari ini",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text(
+                              "Kelas Hari ini",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          trailing: TextButton(
-                            onPressed: () {
-                              ref.watch(navProvider.notifier).changeIndex(1);
-                            },
-                            child: const Text(
-                              "Lihat Semua",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
+                            trailing: IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                            title: const Text(
+                                                "Fitur Kelas Hari ini"),
+                                            content: const Text(
+                                              "Fitur kelas hari ini akan menampilkan daftar kelas hanya di hari itu saja, jadi mahasiswa mudah dalam mengecek jadwalnya pada hari tersebut, Stay tune!",
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('Tutup'),
+                                              )
+                                            ],
+                                          ));
+                                },
+                                icon: const Icon(
+                                  FluentIcons.info_12_regular,
+                                ))),
                       ),
                     ),
                     SliverToBoxAdapter(
@@ -339,9 +352,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  Row buildDashboard(
+  Widget buildDashboard(
       int totalMateri, int totalTugas, int totalAbsensi, Size size) {
-    return Row(
+    return Column(
       children: [
         CardSummary(
           "Materi",
@@ -383,63 +396,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget buildClassToday() {
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
-          height: 200,
+          height: 100,
           // color: kGreenPrimary,
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(4, (index) {
-                    if (index == 0) {
-                      return const SizedBox(width: 20);
-                    }
-                    return const Padding(
-                      padding: EdgeInsets.only(right: 25.0),
-                      child: CardClass(),
-                    );
-                  }).toList(),
-                ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(
+                FluentIcons.airplane_take_off_24_filled,
+                size: 40,
               ),
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        FluentIcons.airplane_take_off_24_filled,
-                        size: 40,
-                      ),
-                      Text('Coming soon')
-                    ],
-                  ),
-                ),
-              )
+              Text('Coming soon')
             ],
           ),
         )
-        // SizedBox(
-        //   width: size.width,
-        //   height: 250,
-        //   child: ListView.separated(
-        //       physics: const BouncingScrollPhysics(),
-        //       scrollDirection: Axis.horizontal,
-        //       itemCount: 5,
-        //       separatorBuilder: (context, index) => const SizedBox(
-        //             width: 20,
-        //           ),
-        //       itemBuilder: (context, index) {
-        //         if (index == 0) {
-        //           return const SizedBox(width: 0);
-        //         } else {
-        //           return const CardClass();
-        //         }
-        //       }),
-        // )
       ],
     );
   }

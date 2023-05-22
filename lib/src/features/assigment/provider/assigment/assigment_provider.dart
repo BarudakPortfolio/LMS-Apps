@@ -10,3 +10,11 @@ final assigmentNotifierProvider =
       storage: ref.watch(storageProvider),
       assigmentApi: ref.watch(assigmentProvider));
 });
+
+final archiveAssigmentNotifier =
+    StateNotifierProvider<ArchiveAssigmentNotifier, List<Map<String, dynamic>>>(
+        (ref) {
+  return ArchiveAssigmentNotifier(
+    assigmentApi: ref.watch(assigmentProvider),
+  );
+});

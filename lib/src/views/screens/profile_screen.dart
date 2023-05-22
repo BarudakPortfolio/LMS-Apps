@@ -149,6 +149,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white10,
         elevation: 0.0,
+        titleSpacing: -35,
         title: const Text(
           'Profil',
           style: TextStyle(
@@ -158,11 +159,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            color: const Color(0xff06283D),
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.edit),
+          //   color: const Color(0xff06283D),
+          //   onPressed: () {},
+          // ),
           IconButton(
             icon: const Icon(Icons.menu),
             color: const Color(0xff06283D),

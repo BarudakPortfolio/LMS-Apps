@@ -17,6 +17,7 @@ dependencies:
   flutter_riverpod: ^2.3.6
   flutter_screenutil: ^5.7.0
   flutter_secure_storage: ^8.0.0
+  flutter_slidable: ^3.0.0
   flutter_svg: ^2.0.5
   flutter_widget_from_html: ^0.10.0
   get_it: ^7.3.0
