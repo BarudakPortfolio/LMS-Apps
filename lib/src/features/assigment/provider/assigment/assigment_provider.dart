@@ -15,6 +15,7 @@ final archiveAssigmentNotifier =
     StateNotifierProvider<ArchiveAssigmentNotifier, List<Map<String, dynamic>>>(
         (ref) {
   return ArchiveAssigmentNotifier(
+    storage: ref.watch(storageProvider),
     assigmentApi: ref.watch(assigmentProvider),
   );
 });

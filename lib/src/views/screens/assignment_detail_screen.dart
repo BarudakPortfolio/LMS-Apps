@@ -1,11 +1,16 @@
+import 'package:dartz/dartz.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:lms/src/core/style/theme.dart';
+import 'package:lms/src/features/assigment/data/assigment_api.dart';
+import 'package:open_file/open_file.dart' as OpenFile;
+
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/assigment/provider/assigment_detail/assigment_detail_provider.dart';
 import '../components/jumbotron_assignment.dart';
@@ -49,6 +54,7 @@ class _AssignmentDetailScreenState
     final archiveAssignment = ref.watch(archiveAssigmentNotifier);
     final state = ref.watch(detailAssignmentNotifierProvider);
     final assignment = state.data;
+    bool isDone = state.data?.isDone == 'y';
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -105,7 +111,7 @@ class _AssignmentDetailScreenState
           // )
         ],
       ),
-      body: state.isLoading && state.data == null
+      body: state.isLoading && state.data == null && assignment == null
           ? Center(
               child: LoadingAnimationWidget.waveDots(
                   size: 40, color: Theme.of(context).primaryColor),
@@ -142,8 +148,8 @@ class _AssignmentDetailScreenState
                               Text("File Tambahan :",
                                   style:
                                       TextStyle(color: theme.primaryColorDark)),
-                              assignment!.detail!.image == null ||
-                                      assignment.detail!.image!.isEmpty
+                              assignment?.detail?.image == null ||
+                                      assignment!.detail!.image!.isEmpty
                                   ? Text("Tidak ada File",
                                       style: TextStyle(
                                           color: theme.primaryColorDark))
@@ -187,38 +193,43 @@ class _AssignmentDetailScreenState
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 10),
                                 child: HtmlWidget(
-                                  assignment.detail!.konten!,
-                                  // onTapUrl: (p0) {},
+                                  assignment!.detail!.konten!,
+                                  onTapUrl: (link) async {
+                                    Uri uri = Uri.parse(link);
+                                    await launchUrl(uri);
+                                    return true;
+                                  },
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                backgroundColor: kGreenPrimary,
+                      if (!isDone)
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  backgroundColor: kGreenPrimary,
+                                ),
+                                onPressed: () {
+                                  ref
+                                      .watch(archiveAssigmentNotifier.notifier)
+                                      .addArchiveAssigment();
+                                },
+                                child: const Text("+ Lampirkan Tugas"),
                               ),
-                              onPressed: () {
-                                ref
-                                    .watch(archiveAssigmentNotifier.notifier)
-                                    .addArchiveAssigment();
-                              },
-                              child: const Text("+ Lampirkan Tugas"),
-                            ),
-                            const Text(
-                                "*File yang dapat di upload hanya format pdf, png, jpg,",
-                                style: TextStyle(fontSize: 12))
-                          ],
+                              const Text(
+                                  "*File yang dapat di upload hanya format pdf, png, jpg,",
+                                  style: TextStyle(fontSize: 12))
+                            ],
+                          ),
                         ),
-                      ),
                       Column(
                         children: List.generate(
                             archiveAssignment.length,
@@ -244,50 +255,133 @@ class _AssignmentDetailScreenState
                                   child: archiveAssignment[index]['widget'],
                                 )),
                       ),
-                      const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
+                      if (isDone)
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Lampirkan Link Pengerjaan : "),
-                            TextFormField(
-                              controller: _linkYoutubeCtrl,
-                              decoration: InputDecoration(
-                                  hintText: "Masukkan Link Drive",
-                                  filled: true,
-                                  fillColor: Colors.grey[200],
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10))),
+                            const Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text("Dokumen pengerjaan : "),
                             ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: _linkDownloadCtrl,
-                              decoration: InputDecoration(
-                                  hintText: "Masukkan Link Donwload",
-                                  filled: true,
-                                  fillColor: Colors.grey[200],
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10))),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                  children: assignment.file!
+                                      .map(
+                                        (e) => Card(
+                                          child: ListTile(
+                                            onTap: () {
+                                              ref
+                                                  .watch(assigmentProvider)
+                                                  .getFileFromUrl(e);
+                                            },
+                                            leading:
+                                                const Icon(Icons.file_present),
+                                            title: Text(e.namaFile!),
+                                          ),
+                                        ),
+                                      )
+                                      .toList()),
                             ),
                           ],
                         ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(10),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              backgroundColor: kGreenPrimary),
-                          onPressed: () {},
-                          child: const Text(
-                            "Kirim",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                      const SizedBox(height: 10),
+                      if (!isDone)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Lampirkan Link Pengerjaan : "),
+                              TextFormField(
+                                controller: _linkYoutubeCtrl,
+                                decoration: InputDecoration(
+                                    hintText: "Masukkan Link Drive",
+                                    filled: true,
+                                    fillColor: Colors.grey[200],
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10))),
+                              ),
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                controller: _linkDownloadCtrl,
+                                decoration: InputDecoration(
+                                    hintText: "Masukkan Link Donwload",
+                                    filled: true,
+                                    fillColor: Colors.grey[200],
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10))),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (isDone)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: const Text("Link Pengerjaan : ")),
+                            if (assignment.linkDownload != null)
+                              Card(
+                                child: TextButton(
+                                    onPressed: () async {
+                                      // _launchURL(tugas.linkDownload!);
+                                      Uri uri =
+                                          Uri.parse(assignment.linkDownload!);
+                                      await launchUrl(uri);
+                                    },
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        assignment.linkDownload ?? "",
+                                      ),
+                                    )),
+                              ),
+                            if (assignment.linkYoutube != null)
+                              Card(
+                                child: TextButton(
+                                    onPressed: () async {
+                                      Uri uri =
+                                          Uri.parse(assignment.linkYoutube!);
+                                      await launchUrl(uri);
+                                    },
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            assignment.linkYoutube ?? ""))),
+                              )
+                          ],
+                        ),
+                      if (!isDone)
+                        Container(
+                          margin: const EdgeInsets.all(10),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                backgroundColor: kGreenPrimary),
+                            onPressed: () {
+                              print("kirim");
+                              ref
+                                  .watch(archiveAssigmentNotifier.notifier)
+                                  .sendAssignment(
+                                      assignment.id.toString(),
+                                      _linkDownloadCtrl.text,
+                                      _linkYoutubeCtrl.text);
+                            },
+                            child: const Text(
+                              "Kirim",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
                       const SizedBox(height: 100)
                     ],
                   )),

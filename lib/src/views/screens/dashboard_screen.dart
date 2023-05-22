@@ -327,7 +327,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           'Jam Masuk',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text(state.data!['absensi']['today']['jam_masuk'])
+                        Text(
+                            state.data?['absensi']['today']['jam_masuk'] ?? "-")
                       ],
                     ),
                     const SizedBox(

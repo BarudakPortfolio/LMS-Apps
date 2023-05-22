@@ -29,8 +29,10 @@ class AssigmentNotifier extends StateNotifier<AssigmentState> {
 class ArchiveAssigmentNotifier
     extends StateNotifier<List<Map<String, dynamic>>> {
   final AssigmentApi assigmentApi;
+  final SecureStorage storage;
   ArchiveAssigmentNotifier({
     required this.assigmentApi,
+    required this.storage,
   }) : super([]);
 
   Future addArchiveAssigment() async {
@@ -41,5 +43,26 @@ class ArchiveAssigmentNotifier
 
   removeArchiveAssigment(String idFile) {
     state = state.where((element) => element['id'] != idFile).toList();
+  }
+
+  clearArchiveAssignment() {
+    state = [];
+  }
+
+  Future sendAssignment(
+    String idAssignment,
+    String newLinkDownload,
+    String newLinkYoutube,
+  ) async {
+    final token = await storage.read('token');
+    await assigmentApi.sendAssignment(
+      token,
+      id: idAssignment,
+      linkDownload: newLinkDownload,
+      linkYoutube: newLinkYoutube,
+    );
+    for (var element in state) {
+      await assigmentApi.sendFile(idAssignment, path: element['path']);
+    }
   }
 }
