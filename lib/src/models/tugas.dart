@@ -24,7 +24,7 @@ class Tugas {
   String? createdAt;
   String? updatedAt;
   Detail? detail;
-  List<File>? file;
+  List<FileModel>? file;
   Guru? guru;
   KelasMapel? kelasMapel;
 
@@ -78,7 +78,7 @@ class Tugas {
     if (json['file'] != null) {
       file = [];
       json['file'].forEach((v) {
-        file!.add(File.fromJson(v));
+        file!.add(FileModel.fromJson(v));
       });
     }
     guru = json['detail']['kelas_mapel']['guru'] != null

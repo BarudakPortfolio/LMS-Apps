@@ -35,7 +35,7 @@ class UserModel {
     this.tahunMasuk,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromJson(Map<dynamic, dynamic> json) {
     return UserModel(
       idUser: json['user_id'],
       name: json['nama'],
@@ -54,5 +54,21 @@ class UserModel {
       prodi: json['prodi']['nama'],
       tahunMasuk: json['tahun_masuk'],
     );
+  }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = idUser;
+    data['nim'] = nim;
+    data['nama'] = name;
+    data['jurusan'] = prodi;
+    data['email'] = email;
+    data['jenis_kelamin'] = jenisKelamin;
+    data['agama'] = agama;
+    data['tempat_lahir'] = tempatLahir;
+    data['tanggal_lahir'] = tanggalLahir;
+    data['alamat'] = alamat;
+    data['tahun_masuk'] = tahunMasuk;
+    data['kelas'] = kelas;
+    return data;
   }
 }
