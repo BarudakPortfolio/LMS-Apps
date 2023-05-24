@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:go_router/go_router.dart';
@@ -23,8 +24,10 @@ class MateriDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
+  late PageController _pageController;
   @override
   void initState() {
+    _pageController = PageController();
     Future.microtask(() async {
       ref
           .watch(materiDetailNotifierProvider.notifier)
@@ -108,126 +111,191 @@ class _MateriDetailScreenState extends ConsumerState<MateriDetailScreen> {
               child: LoadingAnimationWidget.waveDots(
                   size: 40, color: Theme.of(context).primaryColor),
             )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${materi.data!.judul}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                Text("${materi.data!.mapel!.nama}",
-                                    style: TextStyle(color: Colors.grey[400])),
-                                Text("${materi.data!.kelasMapel!.nama}",
-                                    style: TextStyle(color: Colors.grey[400])),
-                              ],
-                            ),
-                          ),
-                          Flexible(
-                            child: Column(
-                              children: [
-                                const Icon(
-                                    FluentIcons.calendar_clock_16_regular),
-                                Text(
-                                  formatDateToNumber(materi.data!.createdAt!),
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 12),
-                                )
-                              ],
-                            ),
-                          ),
-                        ]),
-                  ),
-                  const SizedBox(height: 20),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Deskripsi : ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: HtmlWidget(
-                      materi.data!.konten!,
-                      enableCaching: true,
-                      renderMode: RenderMode.column,
-                      onTapUrl: (url) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            fullscreenDialog: true,
-                            builder: (context) {
-                              return WebViewScreen(url);
-                            }));
-                        return false;
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text("File Pendukung : "),
-                  Column(
-                    children: materi.data!.file!
-                        .map((file) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: ListTile(
-                                onTap: () async {
-                                  if (await Permission
-                                      .manageExternalStorage.isDenied) {
-                                    await Permission.manageExternalStorage
-                                        .request();
-                                    await Permission.camera.request();
-                                  }
-                                  ref
-                                      .watch(materiApiProvider)
-                                      .getFileFromUrl(file)
-                                      .then((value) {
-                                    if (value != null) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                              SnackBar(content: Text(value)));
-                                    }
-                                  });
-                                },
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                tileColor: kGreenPrimary,
-                                leading: const Icon(
-                                  FluentIcons.document_16_regular,
-                                  color: Colors.white,
-                                ),
-                                title: Text(
-                                  file.namaFile!,
-                                  style: const TextStyle(color: Colors.white),
+          : PageView(
+              controller: _pageController,
+              children: [
+                SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${materi.data!.judul}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text("${materi.data!.mapel!.nama}",
+                                        style:
+                                            TextStyle(color: Colors.grey[400])),
+                                    Text("${materi.data!.kelasMapel!.nama}",
+                                        style:
+                                            TextStyle(color: Colors.grey[400])),
+                                  ],
                                 ),
                               ),
-                            ))
-                        .toList(),
-                  )
-                ],
-              ),
+                              Flexible(
+                                child: Column(
+                                  children: [
+                                    const Icon(
+                                        FluentIcons.calendar_clock_16_regular),
+                                    Text(
+                                      formatDateToNumber(
+                                          materi.data!.createdAt!),
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(fontSize: 12),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ]),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Deskripsi : ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: HtmlWidget(
+                          materi.data!.konten!,
+                          enableCaching: true,
+                          renderMode: RenderMode.column,
+                          onTapUrl: (url) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                fullscreenDialog: true,
+                                builder: (context) {
+                                  return WebViewScreen(url);
+                                }));
+                            return false;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text("File Pendukung : "),
+                      Column(
+                        children: materi.data!.file!
+                            .map((file) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: FutureBuilder(
+                                      future: ref
+                                          .watch(materiApiProvider)
+                                          .getFileFromUrl(file),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const SizedBox();
+                                        }
+                                        return ListTile(
+                                          onTap: () async {
+                                            showModalBottomSheet(
+                                              enableDrag: false,
+                                              isScrollControlled: true,
+                                              context: context,
+                                              builder: (_) => SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.9,
+                                                child: Column(
+                                                  children: [
+                                                    ListTile(
+                                                      title:
+                                                          Text(file.namaFile!),
+
+                                                      trailing: IconButton(
+                                                        icon: const Icon(Icons.close, color: kGreenPrimary,),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Card(
+                                                        child: PDFView(
+                                                          filePath: snapshot.data,
+                                                          autoSpacing: true,
+                                                          fitPolicy:
+                                                              FitPolicy.BOTH,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          tileColor: kGreenPrimary,
+                                          leading: const Icon(
+                                            FluentIcons.document_16_regular,
+                                            color: Colors.white,
+                                          ),
+                                          title: Text(
+                                            file.namaFile!,
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                          ),
+                                        );
+                                      }),
+                                ))
+                            .toList(),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
+    );
+  }
+}
+
+class PDFViewer extends StatelessWidget {
+  String? filePath;
+  PDFViewer({Key? key, this.filePath}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Pdf"),
+      ),
+      body: PDFView(
+        filePath: filePath,
+        autoSpacing: true,
+        pageFling: false,
+        pageSnap: false,
+        fitEachPage: false,
+        defaultPage: 0,
+        fitPolicy: FitPolicy.BOTH,
+        preventLinkNavigation: true,
+      ),
     );
   }
 }

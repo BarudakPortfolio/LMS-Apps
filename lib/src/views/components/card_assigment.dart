@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 
 import '../../core/utils/extentions/check_status_tugas.dart';
@@ -19,6 +20,7 @@ class CardAssigment extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
+      borderRadius: BorderRadius.circular(10),
       onTap: () {
         print(assigment.id);
         print("FOTO ${assigment.foto}");
@@ -42,9 +44,9 @@ class CardAssigment extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-        ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: kGreenPrimary, width: 0.5)),
         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
         child: Column(
           children: [

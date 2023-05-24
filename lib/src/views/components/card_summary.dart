@@ -1,6 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/style/theme.dart';
+
 class CardSummary extends StatelessWidget {
   const CardSummary(this.title, this.value,
       {super.key, required this.onTap, required this.icon});
@@ -18,6 +20,7 @@ class CardSummary extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: kGreenPrimary, width: 0.5),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

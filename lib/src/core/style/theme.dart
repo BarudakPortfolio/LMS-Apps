@@ -4,7 +4,15 @@ const kGreenPrimary = Color(0xff256D85);
 const kGreen = Color(0xff06283D);
 const kWhiteBg = Color(0xffF7F6FB);
 const kwhite = Color(0xff797979);
-
+const shade = 200;
+List<Color> classColors = [
+  Colors.red[shade]!,
+  Colors.green[shade]!,
+  Colors.purple[shade]!,
+  Colors.blue[shade]!,
+  Colors.orange[shade]!,
+  Colors.grey[shade]!,
+];
 ThemeData lightTheme = ThemeData(
   primaryColorLight: Colors.black,
   primaryColorDark: Colors.white,

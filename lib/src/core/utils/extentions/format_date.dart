@@ -31,7 +31,7 @@ dynamic formatDatetimeNumber(String date) {
 }
 
 formatDateToNumber(String date) {
-  var format = DateFormat('EEEE dd-mm-yyyy', 'id_ID');
+  var format = DateFormat('EEEE\ndd MMMM yyyy', 'id_ID');
   var formatted = format.format(DateTime.parse(date));
   return formatted;
 }

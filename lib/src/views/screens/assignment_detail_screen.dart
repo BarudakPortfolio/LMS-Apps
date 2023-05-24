@@ -13,6 +13,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/assigment/provider/assigment_detail/assigment_detail_provider.dart';
+import '../../models/tugas.dart';
 import '../components/jumbotron_assignment.dart';
 
 class AssignmentDetailScreen extends ConsumerStatefulWidget {
@@ -53,7 +54,7 @@ class _AssignmentDetailScreenState
   Widget build(BuildContext context) {
     final archiveAssignment = ref.watch(archiveAssigmentNotifier);
     final state = ref.watch(detailAssignmentNotifierProvider);
-    final assignment = state.data;
+    Tugas? assignment = state.data;
     bool isDone = state.data?.isDone == 'y';
     final theme = Theme.of(context);
     return Scaffold(
@@ -111,7 +112,7 @@ class _AssignmentDetailScreenState
           // )
         ],
       ),
-      body: state.isLoading && state.data == null && assignment == null
+      body: state.isLoading && assignment == null
           ? Center(
               child: LoadingAnimationWidget.waveDots(
                   size: 40, color: Theme.of(context).primaryColor),
@@ -246,7 +247,7 @@ class _AssignmentDetailScreenState
                                                     archiveAssignment[index]
                                                         ['id']);
                                           },
-                                          backgroundColor: Color(0xFFFE4A49),
+                                          backgroundColor: const Color(0xFFFE4A49),
                                           foregroundColor: Colors.white,
                                           icon: Icons.delete,
                                           label: 'Delete',
@@ -367,12 +368,17 @@ class _AssignmentDetailScreenState
                                 backgroundColor: kGreenPrimary),
                             onPressed: () {
                               print("kirim");
-                              ref
-                                  .watch(archiveAssigmentNotifier.notifier)
-                                  .sendAssignment(
-                                      assignment.id.toString(),
-                                      _linkDownloadCtrl.text,
-                                      _linkYoutubeCtrl.text);
+                              if(archiveAssignment.isEmpty  || _linkDownloadCtrl.text.isEmpty || _linkYoutubeCtrl.text.isEmpty){
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Silahkan Lampirkan jawaban anda")));
+                              }else{
+                                ref.watch(assigmentNotifierProvider.notifier).getAssigment();
+                                ref
+                                    .watch(archiveAssigmentNotifier.notifier)
+                                    .sendAssignment(
+                                    assignment.id.toString(),
+                                    _linkDownloadCtrl.text,
+                                    _linkYoutubeCtrl.text);
+                              }
                             },
                             child: const Text(
                               "Kirim",

@@ -10,7 +10,6 @@ import 'package:open_file/open_file.dart' as OpenFile;
 import 'package:lms/src/models/materi.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../models/file.dart';
 
@@ -32,6 +31,7 @@ class MateriApi {
     if (response.statusCode == 200) {
       List result = jsonDecode(response.body)["data"];
       List<Materi> listMateri = result.map((e) => Materi.fromJson(e)).toList();
+      listMateri.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
       return Right(listMateri);
     } else {
       return const Left("Tidak ada Materi");
@@ -67,20 +67,21 @@ class MateriApi {
       File filePath = File("${dir.path}/$nameFile");
 
       File fileAsPath = await filePath.writeAsBytes(bytesBody);
-      final result = await OpenFile.OpenFile.open(fileAsPath.path);
-      print(result.type);
-      print(result.message);
-      switch (result.type) {
-        case ResultType.noAppToOpen:
-          return "Tidak ada aplikasi untuk membuka dokumen";
-        case ResultType.permissionDenied:
-          return "Izin aplikasi untuk membuka dokumen belum diizinkan";
-        case ResultType.fileNotFound:
-          return "Dokumen tidak ditemukan";
-        case ResultType.error:
-          return "Dokumen terjadi kesalahan";
-        default:
-      }
+      return fileAsPath.path;
+      // final result = await OpenFile.OpenFile.open(fileAsPath.path);
+      // print(result.type);
+      // print(result.message);
+      // switch (result.type) {
+      //   case ResultType.noAppToOpen:
+      //     return "Tidak ada aplikasi untuk membuka dokumen";
+      //   case ResultType.permissionDenied:
+      //     return "Izin aplikasi untuk membuka dokumen belum diizinkan";
+      //   case ResultType.fileNotFound:
+      //     return "Dokumen tidak ditemukan";
+      //   case ResultType.error:
+      //     return "Dokumen terjadi kesalahan";
+      //   default:
+      // }
     }
   }
 }

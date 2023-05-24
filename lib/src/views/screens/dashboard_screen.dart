@@ -340,6 +340,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: kGreenPrimary, width: 0.5),
               ),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

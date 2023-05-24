@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,21 +62,21 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
               ),
               SliverPersistentHeader(
                 pinned: true,
-                delegate: MyTabBarDelegate(
+                delegate: MyTabBarDelegate(60, 60,
                     tabBar: TabBar(
-                  padding: const EdgeInsets.all(10),
-                  unselectedLabelColor: Colors.black,
-                  indicator: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  indicatorColor: Theme.of(context).primaryColor,
-                  labelColor: Colors.white,
-                  tabs: const [
-                    Tab(text: "Daftar Kelas"),
-                    Tab(text: "Jadwal Kelas"),
-                  ],
-                )),
+                      padding: const EdgeInsets.all(10),
+                      unselectedLabelColor: Colors.black,
+                      indicator: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      indicatorColor: Theme.of(context).primaryColor,
+                      labelColor: Colors.white,
+                      tabs: const [
+                        Tab(text: "Daftar Kelas"),
+                        Tab(text: "Jadwal Kelas"),
+                      ],
+                    )),
               ),
             ];
           },
@@ -114,52 +116,55 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
               padding: const EdgeInsets.only(top: 10),
               child: ScrollConfiguration(
                 behavior: RemoveScrollGlow(),
-                child: Builder(builder: (context) {
-                  return TimePlanner(
-                    style: TimePlannerStyle(
-                      horizontalTaskPadding: 5,
-                      cellWidth: 200,
-                    ),
-                    headers: List.generate(7, (day) {
-                      var datetime = DateTime(2023, 8, day);
-                      String dayName =
-                          DateFormat("EEEE", "id_ID").format(datetime);
-                      return TimePlannerTitle(title: dayName);
-                    }),
-                    startHour: 7,
-                    endHour: 19,
-                    tasks: kelas.classes?.map((data) {
-                      DateTime startTime =
-                          DateTime.parse('1970-01-02 ${data.waktuMulai!}');
-                      DateTime endTime =
-                          DateTime.parse('1970-01-02 ${data.waktuSelesai!}');
-                      Duration difference = endTime.difference(startTime);
-                      int differenceInMinutes = difference.inMinutes;
-                      int day = dayToNumber(data.hari!);
-                      return TimePlannerTask(
-                        minutesDuration: differenceInMinutes,
-                        dateTime: TimePlannerDateTime(
-                          day: day,
-                          hour: startTime.hour,
-                          minutes: startTime.minute,
-                        ),
-                        child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ListTile(
-                              title: Text(data.nama ?? "no name",
-                                  textAlign: TextAlign.start,
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 12)),
-                              subtitle: Text(
-                                  "${data.waktuMulai!.substring(0, 5)} - ${data.waktuSelesai!.substring(0, 5)}",
-                                  style: const TextStyle(
-                                      color: Colors.black, fontSize: 10)),
-                            )),
-                        onTap: () {},
-                      );
-                    }).toList(),
-                  );
-                }),
+                child: TimePlanner(
+                  style: TimePlannerStyle(
+                    horizontalTaskPadding: 5,
+                    cellWidth: 150,
+                  ),
+                  headers: List.generate(7, (day) {
+                    var datetime = DateTime(2023, 8, day);
+                    String dayName =
+                        DateFormat("EEEE", "id_ID").format(datetime);
+                    return TimePlannerTitle(title: dayName);
+                  }),
+                  startHour: 7,
+                  endHour: 19,
+                  tasks: kelas.classes?.map((data) {
+                    DateTime startTime =
+                        DateTime.parse('1970-01-02 ${data.waktuMulai!}');
+                    DateTime endTime =
+                        DateTime.parse('1970-01-02 ${data.waktuSelesai!}');
+                    Duration difference = endTime.difference(startTime);
+                    int differenceInMinutes = difference.inMinutes;
+                    int day = dayToNumber(data.hari!);
+                    int indexColor = Random().nextInt(classColors.length);
+                    return TimePlannerTask(
+                      color: classColors[indexColor],
+                      minutesDuration: differenceInMinutes,
+                      dateTime: TimePlannerDateTime(
+                        day: day,
+                        hour: startTime.hour,
+                        minutes: startTime.minute,
+                      ),
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            title: Text(data.nama ?? "no name",
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 12)),
+                            subtitle: Text(
+                                "${data.waktuMulai!.substring(0, 5)} - ${data.waktuSelesai!.substring(0, 5)}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                          )),
+                      onTap: () {},
+                    );
+                  }).toList(),
+                ),
               ),
             )
           ]),
@@ -170,8 +175,9 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
 }
 
 class MyTabBarDelegate extends SliverPersistentHeaderDelegate {
-  MyTabBarDelegate({required this.tabBar});
-
+  MyTabBarDelegate(this.max, this.min, {required this.tabBar});
+  final double max;
+  final double min;
   final TabBar tabBar;
 
   @override
@@ -184,10 +190,10 @@ class MyTabBarDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => tabBar.preferredSize.height;
+  double get maxExtent => max;
 
   @override
-  double get minExtent => tabBar.preferredSize.height;
+  double get minExtent => min;
 
   @override
   bool shouldRebuild(covariant MyTabBarDelegate oldDelegate) {
@@ -202,76 +208,71 @@ class CardClass extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 20, left: 20, bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Material(
-        child: InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(10),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
+    return InkWell(
+      onTap: () {},
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: kGreenPrimary, width: 0.5)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${kelas.nama}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              )),
-                          Text('${kelas.namaGuru}',
-                              style: TextStyle(color: Colors.grey[500])),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: kGreenPrimary,
-                      ),
-                      child: Text(
-                        'Ruangan ${kelas.ruangan!}',
-                        style:
-                            const TextStyle(fontSize: 10, color: Colors.white),
-                      ),
-                    )
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${kelas.nama}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          )),
+                      Text('${kelas.namaGuru}',
+                          style: TextStyle(color: Colors.grey[500])),
+                    ],
+                  ),
                 ),
-                const Divider(),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: kGreenPrimary,
+                  ),
+                  child: Text(
+                    'Ruangan ${kelas.ruangan!}',
+                    style: const TextStyle(fontSize: 10, color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+            const Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(FluentIcons.calendar_clock_20_regular),
-                        const SizedBox(width: 3),
-                        Text(
-                          '${kelas.hari!.toTitleCase()}, ${kelas.waktuMulai!.substring(0, 5)} - ${kelas.waktuSelesai!.substring(0, 5)}',
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
+                    const Icon(FluentIcons.calendar_clock_20_regular),
+                    const SizedBox(width: 3),
+                    Text(
+                      '${kelas.hari!.toTitleCase()}, ${kelas.waktuMulai!.substring(0, 5)} - ${kelas.waktuSelesai!.substring(0, 5)}',
+                      style: const TextStyle(fontSize: 12),
                     ),
                   ],
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );

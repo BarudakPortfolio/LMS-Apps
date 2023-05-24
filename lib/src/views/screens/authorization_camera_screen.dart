@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,7 +80,10 @@ class _AuthorizationCameraScreenState
                 } else {
                   return Container(
                     padding: const EdgeInsets.all(20),
-                    child: CameraPreview(_cameraCtrl),
+                    child: Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.rotationY(math.pi),
+                        child: CameraPreview(_cameraCtrl)),
                   );
                 }
               })
