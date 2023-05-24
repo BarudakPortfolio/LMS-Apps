@@ -1,5 +1,7 @@
 import 'package:intl/intl.dart';
 
+import '../../../models/kelas.dart';
+
 formatDate(String date) {
   var format = DateFormat('EEEE, dd MMMM yyyy', 'id_ID');
   var formatted = format.format(DateTime.parse(date));
@@ -34,6 +36,13 @@ formatDateToNumber(String date) {
   var format = DateFormat('EEEE\ndd MMMM yyyy', 'id_ID');
   var formatted = format.format(DateTime.parse(date));
   return formatted;
+}
+
+String formatTimeClass(Kelas classData){
+  var startTime = classData.waktuMulai;
+  var endTime = classData.waktuSelesai;
+  var day = classData.hari;
+  return "$day, $startTime-$endTime";
 }
 
 int dayToNumber(String day) {

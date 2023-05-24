@@ -5,10 +5,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
+import 'package:lms/src/core/utils/extentions/string_capitalize.dart';
 import 'package:lms/src/features/dashboard/provider/dashboard_state.dart';
 import 'package:lms/src/features/kelas/data/class_api.dart';
+import 'package:lms/src/features/kelas/provider/class_notifier.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -18,6 +22,7 @@ import '../../features/connectivity/connectivity_service.dart';
 import '../../features/dashboard/provider/dashboard_provider.dart';
 import '../../features/dashboard/repository.dart/dashboard_repository.dart';
 import '../../features/user/provider/user_provider.dart';
+import '../../models/kelas.dart';
 import '../../models/user.dart';
 import '../components/card_class.dart';
 import '../components/card_summary.dart';
@@ -44,6 +49,7 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  String today = DateFormat("EEEE", "ID_id").format(DateTime.now());
   late final ScrollController _scrollController;
 
   @override
@@ -148,7 +154,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ),
                     ),
                   ],
-                )
+                ),
+
               ],
       ),
       body: ScrollConfiguration(
@@ -224,37 +231,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ),
                       child: ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text(
-                            "Kelas Hari ini",
-                            style: TextStyle(
+                          title: Text(
+                            "Kelas Hari ${today.toCapitalized()}",
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          trailing: IconButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                          title: const Text(
-                                              "Fitur Kelas Hari ini"),
-                                          content: const Text(
-                                            "Fitur kelas hari ini akan menampilkan daftar kelas hanya di hari itu saja, jadi mahasiswa mudah dalam mengecek jadwalnya pada hari tersebut, Stay tune!",
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text('Tutup'),
-                                            )
-                                          ],
-                                        ));
-                              },
-                              icon: const Icon(
-                                FluentIcons.info_12_regular,
-                              ))),
+                          ),
                     ),
                   ),
                   SliverToBoxAdapter(
@@ -417,24 +402,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget buildClassToday() {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          height: 100,
-          // color: kGreenPrimary,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(
-                FluentIcons.airplane_take_off_24_filled,
-                size: 40,
-              ),
-              Text('Coming soon')
-            ],
-          ),
-        )
-      ],
+    final classList = ref.watch(classNotifierProvider).classes;
+    List<Kelas> classToday = classList == null? []: classList.where((dataClass) => dataClass.hari == today.toLowerCase()).toList();
+    return SizedBox(
+      height: 200,
+      child: ListView.separated(
+        physics: const BouncingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+          itemCount: classToday.length + 2,
+          itemBuilder: (_, index){
+          if(index == 0 || index == classToday.length +1){
+            return const SizedBox(width: 10);
+          }else{
+            return CardClass(classModel: classToday[index-1]);
+          }
+      },separatorBuilder: (_, index)=> const SizedBox(width: 20,),),
     );
   }
 
