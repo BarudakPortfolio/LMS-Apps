@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:dartz/dartz.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +13,10 @@ import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 import '../../core/utils/extentions/remove_scroll_grow.dart';
+import '../../core/utils/failures.dart';
+import '../../features/connectivity/connectivity_service.dart';
 import '../../features/dashboard/provider/dashboard_provider.dart';
+import '../../features/dashboard/repository.dart/dashboard_repository.dart';
 import '../../features/user/provider/user_provider.dart';
 import '../../models/user.dart';
 import '../components/card_class.dart';
@@ -26,6 +30,10 @@ class ScrollProvider extends StateNotifier<bool> {
   ScrollProvider() : super(false);
   void scrolled(newState) => state = newState;
 }
+
+final dashboardProvider = FutureProvider<Either<Failure, dynamic>>((ref) async {
+  return ref.read(dashboardRepositoryProvider).getDashboardData();
+});
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -68,7 +76,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var connectivityStatusProvider = ref.watch(connectionStatusProviders);
     final dashboard = ref.watch(dashboardNotifierProvider);
+    final dashboardData = ref.watch(dashboardProvider);
     final user = ref.watch(userNotifierProvider);
     Size size = MediaQuery.of(context).size;
     final isScrolled = ref.watch(scrollProvider);
@@ -143,115 +153,128 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
       body: ScrollConfiguration(
         behavior: RemoveScrollGlow(),
-        child: Consumer(
-          builder: (context, watch, child) {
-            final state = watch.watch(dashboardNotifierProvider);
-            if (state.isLoading) {
-              return loadingDashboard();
-            } else {
-              if (state.data != null) {
-                int totalMateri = state.data!['materi']['total'];
-                int totalTugas = state.data!['tugas']['not_finished'];
-                int totalAbsensi = state.data!['absensi']['report']['hadir'];
-                return CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    const SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 10,
-                      ),
-                    ),
-                    buildReport(state),
-                    const SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 10,
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0,
+        child: dashboardData.when(
+          error: (error, stackTrace) {
+            return Center(
+              child: Text(error.toString()),
+            );
+          },
+          loading: () => loadingDashboard(),
+          data: (data) {
+            return data.fold((l) => Center(child: Text(l.message)), (r) {
+              print(r);
+              int totalMateri = r['materi']['total'];
+              int totalTugas = r['tugas']['not_finished'];
+              int totalAbsensi = r['absensi']['report']['hadir'];
+              return CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  connectivityStatusProvider == ConnectionStatus.isConnected
+                      ? const SliverToBoxAdapter(
+                          child: SizedBox(),
+                        )
+                      : SliverToBoxAdapter(
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            color: Colors.red,
+                            width: MediaQuery.of(context).size.width,
+                            child: const Text('Tidak ada Koneksi Internet',
+                                style: TextStyle(color: Colors.white)),
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Dashboard',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                  const SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 10,
+                    ),
+                  ),
+                  buildReport(r),
+                  const SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 10,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Dashboard',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            buildDashboard(
-                                totalMateri, totalTugas, totalAbsensi, size),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          buildDashboard(
+                              totalMateri, totalTugas, totalAbsensi, size),
+                        ],
                       ),
                     ),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                        ),
-                        child: ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: const Text(
-                              "Kelas Hari ini",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                      ),
+                      child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text(
+                            "Kelas Hari ini",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
-                            trailing: IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => AlertDialog(
-                                            title: const Text(
-                                                "Fitur Kelas Hari ini"),
-                                            content: const Text(
-                                              "Fitur kelas hari ini akan menampilkan daftar kelas hanya di hari itu saja, jadi mahasiswa mudah dalam mengecek jadwalnya pada hari tersebut, Stay tune!",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Tutup'),
-                                              )
-                                            ],
-                                          ));
-                                },
-                                icon: const Icon(
-                                  FluentIcons.info_12_regular,
-                                ))),
-                      ),
+                          ),
+                          trailing: IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                          title: const Text(
+                                              "Fitur Kelas Hari ini"),
+                                          content: const Text(
+                                            "Fitur kelas hari ini akan menampilkan daftar kelas hanya di hari itu saja, jadi mahasiswa mudah dalam mengecek jadwalnya pada hari tersebut, Stay tune!",
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Tutup'),
+                                            )
+                                          ],
+                                        ));
+                              },
+                              icon: const Icon(
+                                FluentIcons.info_12_regular,
+                              ))),
                     ),
-                    SliverToBoxAdapter(
-                      child: buildClassToday(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: buildClassToday(),
+                  ),
+                  const SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 50,
                     ),
-                    const SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 50,
-                      ),
-                    ),
-                  ],
-                );
-              } else {
-                return Text(state.message.toString());
-              }
-            }
+                  ),
+                ],
+              );
+            });
           },
         ),
       ),
     );
   }
 
-  SliverToBoxAdapter buildReport(DashboardState state) {
+  SliverToBoxAdapter buildReport(Map data) {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -327,8 +350,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           'Jam Masuk',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                            state.data?['absensi']['today']['jam_masuk'] ?? "-")
+                        Text(data['absensi']['today']['jam_masuk'] ?? "-")
                       ],
                     ),
                     const SizedBox(
@@ -341,8 +363,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             )),
-                        Text(state.data?['absensi']['today']['jam_keluar'] ??
-                            "-")
+                        Text(data['absensi']['today']['jam_keluar'] ?? "-")
                       ],
                     ),
                   ]),
