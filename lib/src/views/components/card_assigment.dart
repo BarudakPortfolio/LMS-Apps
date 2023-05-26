@@ -92,11 +92,11 @@ class CardAssigment extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 children: [
-                  if (assigment.isDone == 'y')
+                  if (assigment.nilai != null)
                     const BannerGrade("Dinilai", Colors.green),
                   if (assigment.pesan != null)
                     const BannerGrade("Pesan", Colors.yellow),
-                  if (assigment.isDone == 'n')
+                  if (assigment.nilai == null)
                     const BannerGrade("Belum dinilai", Colors.grey),
                 ],
               ),

@@ -37,7 +37,7 @@ class ScrollProvider extends StateNotifier<bool> {
 }
 
 final dashboardProvider = FutureProvider<Either<Failure, dynamic>>((ref) async {
-  return ref.read(dashboardRepositoryProvider).getDashboardData();
+  return ref.watch(dashboardRepositoryProvider).getDashboardData();
 });
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -406,7 +406,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     List<Kelas> classToday = classList == null? []: classList.where((dataClass) => dataClass.hari == today.toLowerCase()).toList();
     return SizedBox(
       height: 200,
-      child: ListView.separated(
+      child: classToday.isEmpty ?
+          Center(child: SvgPicture.asset("assets/images/tidak_ada_kelas.svg", height: 170,))
+          :ListView.separated(
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
           itemCount: classToday.length + 2,

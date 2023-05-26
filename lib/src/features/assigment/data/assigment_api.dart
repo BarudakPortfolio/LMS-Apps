@@ -75,20 +75,26 @@ class AssigmentApi {
 
   Future<Either<String, List<Tugas>>> getAssigment(String token,
       {String? mapelId, String? status}) async {
-    mapelId ??= "all";
     status ??= "all";
+    mapelId ??="all";
     Uri url = Uri.parse(
-      "$BASE_URL/student_area/tugas?mapel_id=$mapelId&is_done=$status",
+      "$BASE_URL/student_area/tugas?rombel_id=all&is_done=$status&page=1${mapelId != "all" ? "&mapel_id=$mapelId" : ""}",
     );
+
+
+    print(url);
 
     final response = await client.get(url, headers: {
       "Authorization": "Bearer $token",
     });
 
+    print(response.body);
+
     if (response.statusCode == 200) {
       List result = jsonDecode(response.body)['data'];
       List<Tugas> listAssigment =
           result.map((assigment) => Tugas.fromJson(assigment)).toList();
+      listAssigment.sort((a,b)=> b.createdAt!.compareTo(a.createdAt!));
       return Right(listAssigment);
     }
     return const Left("Tugas Tidak Ada");

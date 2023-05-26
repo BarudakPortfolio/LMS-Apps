@@ -102,6 +102,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     borderRadius: BorderRadius.circular(10)),
                 tileColor: Colors.red,
                 onTap: () {
+                  context.pop();
                   showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -120,13 +121,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   backgroundColor: Colors.red,
                                 ),
                                 onPressed: () {
+
+
                                   Future.delayed(const Duration(seconds: 1),
                                       () {
-                                    Navigator.pop(context);
                                     navIndex.changeIndex(0);
                                     auth.logout();
-                                    context.goNamed('login');
                                   });
+                                  context.pop();
+                                  context.pushReplacementNamed("login");
                                 },
                                 child: const Text("Keluar"),
                               ),

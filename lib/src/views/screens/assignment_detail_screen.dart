@@ -6,6 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/features/assigment/data/assigment_api.dart';
+import 'package:lms/src/views/screens/assignment_screen.dart';
 import 'package:open_file/open_file.dart' as OpenFile;
 
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
@@ -367,18 +368,33 @@ class _AssignmentDetailScreenState
                                     const EdgeInsets.symmetric(vertical: 12),
                                 backgroundColor: kGreenPrimary),
                             onPressed: () {
-                              print("kirim");
-                              if(archiveAssignment.isEmpty  || _linkDownloadCtrl.text.isEmpty || _linkYoutubeCtrl.text.isEmpty){
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Silahkan Lampirkan jawaban anda")));
-                              }else{
-                                ref.watch(assigmentNotifierProvider.notifier).getAssigment();
-                                ref
-                                    .watch(archiveAssigmentNotifier.notifier)
-                                    .sendAssignment(
+                              final selectedClass = ref.watch(dropdownClassNotifierProvider);
+                              final selectedStatus = ref.watch(dropdownStatusNotifierProvider);
+                              final handleAssignment = ref.watch(archiveAssigmentNotifier.notifier);
+                              if(archiveAssignment.isNotEmpty  || _linkDownloadCtrl.text.isNotEmpty || _linkYoutubeCtrl.text.isNotEmpty){
+                                    handleAssignment.sendAssignment(
                                     assignment.id.toString(),
                                     _linkDownloadCtrl.text,
-                                    _linkYoutubeCtrl.text);
+                                    _linkYoutubeCtrl.text).then((value) {
+                                  ref
+                                      .watch(detailAssignmentNotifierProvider.notifier)
+                                      .getDetailAssignment(
+                                    widget.id,
+                                  );
+                                  ref.watch(assigmentNotifierProvider.notifier).getAssigment(
+                                    newMapelId: selectedClass,
+                                    newStatus: selectedStatus,
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                      backgroundColor: Colors.green,
+                                      content: Text("Tugas Terkirim")));
+                                });
+                              }else{
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Silahkan Lampirkan jawaban anda")));
+
                               }
+
+
                             },
                             child: const Text(
                               "Kirim",
