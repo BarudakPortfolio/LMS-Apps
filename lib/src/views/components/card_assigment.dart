@@ -5,7 +5,6 @@ import 'package:lms/src/features/assigment/provider/assigment/assigment_provider
 
 import '../../core/utils/extentions/check_status_tugas.dart';
 import '../../core/utils/extentions/format_date.dart';
-import '../../features/assigment/provider/assigment_detail/assigment_detail_provider.dart';
 import '../../models/tugas.dart';
 import 'banner_grade.dart';
 

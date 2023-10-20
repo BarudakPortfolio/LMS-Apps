@@ -22,7 +22,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await storage.write("token", r);
       await storage.write("username", username);
       await storage.write("password", password);
-      print(storage.read('token'));
+
       state = AuthState.authenticated(r);
       return true;
     });

@@ -1,13 +1,9 @@
-import 'dart:ui';
-
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/core/utils/extentions/format_date.dart';
 import 'package:lms/src/features/dashboard/provider/dashboard_state.dart';
-import 'package:lms/src/features/kelas/data/class_api.dart';
 import 'package:lms/src/views/screens/main_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -15,7 +11,6 @@ import '../../core/utils/extentions/remove_scroll_grow.dart';
 import '../../features/dashboard/provider/dashboard_provider.dart';
 import '../../features/user/provider/user_provider.dart';
 import '../../models/user.dart';
-import '../components/card_class.dart';
 import '../components/card_summary.dart';
 
 final scrollProvider = StateNotifierProvider<ScrollProvider, bool>((ref) {
@@ -395,7 +390,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget buildClassToday() {
-    return Column(
+    return const Column(
       children: [
         SizedBox(
           width: double.infinity,
@@ -403,7 +398,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           // color: kGreenPrimary,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(
                 FluentIcons.airplane_take_off_24_filled,
                 size: 40,

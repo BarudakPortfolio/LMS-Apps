@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:lms/src/core/style/theme.dart';
 import 'package:lms/src/features/assigment/data/assigment_api.dart';
-import 'package:open_file/open_file.dart' as OpenFile;
 
 import 'package:lms/src/features/assigment/provider/assigment/assigment_provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';

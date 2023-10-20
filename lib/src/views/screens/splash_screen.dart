@@ -108,7 +108,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       vertical: 20,
                       horizontal: MediaQuery.of(context).size.width / 3),
                   child: const LinearProgressIndicator(
-                    color: kGreenPrimary,
                     backgroundColor: kWhiteBg,
                   ),
                 ),
@@ -127,8 +126,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         child: CustomPaint(
                           size: kSize,
                           painter: WavePainter(
-                              animationController: animationController,
-                              isRightDirection: true),
+                            animationController: animationController,
+                            isRightDirection: true,
+                          ),
                         ),
                       ),
                       Positioned(
@@ -137,8 +137,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         child: CustomPaint(
                           size: kSize,
                           painter: WavePainter(
-                              animationController: animationController,
-                              isRightDirection: false),
+                            animationController: animationController,
+                            isRightDirection: false,
+                          ),
                         ),
                       ),
                     ],
@@ -193,16 +194,11 @@ class WavePainter extends CustomPainter {
     }
 
     final Gradient gradient = LinearGradient(
-        begin: const Alignment(-1.0, -1.0), //top
-        end: const Alignment(-1.0, 1.0), //center
-        colors: const <Color>[
-          kBottomColor,
-          kTopColor,
-        ],
-        stops: [
-          isRightDirection ? 0.1 : 0.4,
-          isRightDirection ? 0.9 : 1
-        ]);
+      begin: const Alignment(-1.0, -1.0), //top
+      end: const Alignment(-1.0, 1.0), //center
+      colors: const <Color>[kBlueColor, Color.fromARGB(255, 2, 34, 87)],
+      stops: [isRightDirection ? 0.1 : 0.4, isRightDirection ? 0.9 : 1],
+    );
     final wave = Path();
     wave.addPolygon(polygonOffsets, false);
     wave.lineTo(xOffset, size.height);

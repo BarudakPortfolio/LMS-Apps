@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -26,26 +28,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   late TextEditingController passCtrl;
   late GlobalKey<FormState> _formKey;
   late AnimationController _controller;
-  late Animation<double> _animation;
 
   @override
   void initState() {
     usernameCtrl = TextEditingController();
     passCtrl = TextEditingController();
     _formKey = GlobalKey<FormState>();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 1), // Set the animation duration
-      vsync: this,
-    );
 
-    // Define the opacity transition from 0.0 to 1.0
-    _animation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(_controller);
-
-    // Start the animation
-    _controller.forward();
     super.initState();
   }
 
@@ -62,74 +51,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Stack(children: [
-        SizedBox(
-          width: size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SvgPicture.asset(
-                'assets/images/splash.svg',
-                width: size.width,
-              ),
-              Container(
-                width: size.width,
-                height: size.height * 0.3,
-                decoration: BoxDecoration(
-                    color: kGreenPrimary,
-                    borderRadius: BorderRadius.circular(_animation.value * 5)),
-              )
-            ],
-          ),
+      body: Container(
+        margin: const EdgeInsets.symmetric(
+          horizontal: 24,
         ),
-        AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _animation.value,
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                  child: Container(
-                    width: 100,
-                  ),
-                ),
-              );
-            }),
-        Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 40,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildHeader(),
-              const SizedBox(height: 15),
-              buildFormLogin(),
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildHeader(),
+            const SizedBox(height: 15),
+            buildFormLogin(),
+          ],
         ),
-      ]),
+      ),
     );
   }
 
   Column buildHeader() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
+      children: [
         Text(
           "E-learning",
           style: TextStyle(fontSize: 34, fontWeight: FontWeight.w700),
         ),
         Text(
-          "Layanan Digitalisasi Sekolah",
+          "for Student Edition",
           style: TextStyle(fontSize: 16, color: Color(0xFF06283D)),
         ),
       ],
     );
   }
 
-  Card buildFormLogin() {
+  Widget buildFormLogin() {
     final auth = ref.read(authNotifierProvider.notifier);
     final userNotifier = ref.watch(userNotifierProvider.notifier);
     final collect = ref.watch(collectdataProvider);
@@ -149,81 +104,78 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 buildSnackBar("NIM atau password salah", Colors.red));
           }
         });
-      } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(buildSnackBar("Gagal Login", Colors.red));
       }
     }
 
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      elevation: 5,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          const Text(
-            "Selamat Datang",
-            style: TextStyle(
-              fontFamily: "Poppins",
-              fontSize: 18,
-              color: Color(0xff256D85),
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        const Text(
+          "Masuk",
+          style: TextStyle(
+            fontFamily: "Poppins",
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
           ),
-          Container(
-            margin: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    TextForm(
-                      usernameCtrl,
-                      "Masukkan Nim",
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Harap Isi Username";
-                        }
-                        return null;
-                      },
-                    ),
-                    TextForm(
-                      passCtrl,
-                      'Masukkan Password',
-                      isObsecure: true,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Harap Isi Password";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.all(15),
-                            backgroundColor: kGreenPrimary,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                              10,
-                            ))),
-                        onPressed: loginHandle,
-                        child: isLoading
-                            ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: LoadingAnimationWidget.waveDots(
-                                    size: 30, color: Colors.white),
-                              )
-                            : const Text("Masuk"))
-                  ]),
+        ),
+        Form(
+          key: _formKey,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            TextForm(
+              usernameCtrl,
+              "Masukkan NIM",
+              maxLength: 7,
+              textInputType: TextInputType.number,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Harap Isi NIM";
+                }
+                return null;
+              },
+              prefix: const Icon(Icons.numbers_rounded, size: 20),
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
             ),
-          ),
-        ],
-      ),
+            TextForm(
+              passCtrl,
+              'Masukkan Password',
+              prefix: const Icon(Icons.lock_rounded, size: 20),
+              isObsecure: true,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Harap Isi Password";
+                } else if (value.length < 6) {
+                  return "Password minimal 6 karakter";
+                }
+                return null;
+              },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              height: 50,
+              child: FilledButton(
+                onPressed: loginHandle,
+                child: isLoading
+                    ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: LoadingAnimationWidget.waveDots(
+                          size: 30,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text("Masuk"),
+              ),
+            )
+          ]),
+        ),
+      ],
     );
   }
 }

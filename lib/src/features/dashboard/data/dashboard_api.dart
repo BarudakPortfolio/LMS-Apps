@@ -6,8 +6,6 @@ import 'package:http/io_client.dart';
 
 import '../../../core/common/constants.dart';
 import '../../http/provider/http_provider.dart';
-import '../../storage/provider/storage_provider.dart';
-import '../../storage/service/storage.dart';
 
 final dashboardApiProvider = Provider<DashboardApi>((ref) {
   return DashboardApi(client: ref.watch(httpProvider));

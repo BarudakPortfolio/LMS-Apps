@@ -125,10 +125,10 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               collapseMode: CollapseMode.parallax,
-              title: SafeArea(
+              title: const SafeArea(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(FluentIcons.book_24_regular),
                     SizedBox(width: 10),
                     Text("Tugas",

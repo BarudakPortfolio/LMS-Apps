@@ -15,8 +15,11 @@ void main() async {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
+
   await initializeDateFormatting('id_ID');
+
   cameras = await availableCameras();
+
   runApp(
     const ProviderScope(
       child: MainApp(),
