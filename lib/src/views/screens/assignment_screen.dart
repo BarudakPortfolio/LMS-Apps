@@ -9,37 +9,12 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../models/kelas.dart';
 import '../components/card_assigment.dart';
 
-final scrollProvider = StateNotifierProvider<ScrollNotifier, bool>((ref) {
-  return ScrollNotifier();
-});
+final scrollProvider = StateProvider<bool>((ref) => false);
 
-class ScrollNotifier extends StateNotifier<bool> {
-  ScrollNotifier() : super(false);
+final dropdownStatusNotifierProvider = StateProvider<String>((ref) => "all");
 
-  void changeIsButton(bool newvalue) => state = newvalue;
-}
+final dropdownClassNotifierProvider = StateProvider<String>((ref) => "all");
 
-final dropdownStatusNotifierProvider =
-    StateNotifierProvider<DropdownStatusNotifier, String>((ref) {
-  return DropdownStatusNotifier();
-});
-
-class DropdownStatusNotifier extends StateNotifier<String> {
-  DropdownStatusNotifier() : super("all");
-
-  void changeStatus(String newStatus) => state = newStatus;
-}
-
-final dropdownClassNotifierProvider =
-    StateNotifierProvider<DropdownClassNotifier, String>((ref) {
-  return DropdownClassNotifier();
-});
-
-class DropdownClassNotifier extends StateNotifier<String> {
-  DropdownClassNotifier() : super("all");
-
-  void changeStatus(String newClassId) => state = newClassId;
-}
 
 class AssignmentScreen extends ConsumerStatefulWidget {
   const AssignmentScreen({super.key});
@@ -69,13 +44,13 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
         await Permission.camera.request();
       }
     });
-    _scrollController = ScrollController();
-    _scrollController.addListener(() {
+    _scrollController = ScrollController()
+        ..addListener(() {
       if (_scrollController.offset >
           _scrollController.position.maxScrollExtent * 0.05) {
-        ref.watch(scrollProvider.notifier).changeIsButton(true);
+        ref.watch(scrollProvider.notifier).state = (true);
       } else {
-        ref.watch(scrollProvider.notifier).changeIsButton(false);
+        ref.watch(scrollProvider.notifier).state = (false);
       }
     });
     super.initState();
@@ -113,170 +88,176 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
               onPressed: () => scrollOnTop(),
             )
           : const SizedBox(),
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            elevation: 0,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            pinned: true,
-            collapsedHeight: 60,
-            expandedHeight: 150,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              collapseMode: CollapseMode.parallax,
-              title: const SafeArea(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(FluentIcons.book_24_regular),
-                    SizedBox(width: 10),
-                    Text("Tugas",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 16,
-                        )),
-                  ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(const Duration(seconds: 1), () {
+            ref.read(assigmentNotifierProvider.notifier).getAssigment(
+                newStatus: status, newMapelId: classSelected);
+          });
+        },
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverAppBar(
+              elevation: 0,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              pinned: true,
+              collapsedHeight: 60,
+              expandedHeight: 150,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                collapseMode: CollapseMode.parallax,
+                title: const SafeArea(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(FluentIcons.book_24_regular),
+                      SizedBox(width: 10),
+                      Text("Tugas",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontSize: 16,
+                          )),
+                    ],
+                  ),
                 ),
-              ),
-              background: Image.asset(
-                "assets/images/bg_tugas.jpg",
-                fit: BoxFit.cover,
+                background: Image.asset(
+                  "assets/images/bg_tugas.jpg",
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          SliverPersistentHeader(
-              pinned: true,
-              delegate: PersistentHeader(
-                100,
-                100,
-                widget: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Text("Pilih Kategori Tugas : "),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(5),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
+            SliverPersistentHeader(
+                pinned: true,
+                delegate: PersistentHeader(
+                  100,
+                  100,
+                  widget: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: Text("Pilih Kategori Tugas : "),
                       ),
-                      child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                        menuMaxHeight: 250,
-                        borderRadius: BorderRadius.circular(15),
-                        iconEnabledColor: Colors.black,
-                        isExpanded: true,
-                        value: classSelected,
-                        hint: const Text("Mata Kuliah"),
-                        items: listclass == null
-                            ? []
-                            : [
-                                Kelas(id: "all", nama: "Semua mata kuliah"),
-                                ...listclass
-                              ]
-                                .map((Kelas kelas) => DropdownMenuItem<String>(
-                                      value: kelas.id,
-                                      child: Text(kelas.nama!),
-                                    ))
-                                .toList(),
-                        onChanged: (value) {
-                          ref
-                              .watch(assigmentNotifierProvider.notifier)
-                              .getAssigment(
+                      Card(
+                        margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          menuMaxHeight: 250,
+                          borderRadius: BorderRadius.circular(15),
+                          iconEnabledColor: Colors.black,
+                          isExpanded: true,
+                          value: classSelected,
+                          hint: const Text("Mata Kuliah"),
+                          items: listclass == null
+                              ? []
+                              : [
+                                  Kelas(id: "all", nama: "Semua mata kuliah"),
+                                  ...listclass
+                                ]
+                                  .map((Kelas kelas) => DropdownMenuItem<String>(
+                                        value: kelas.id,
+                                        child: Text(kelas.nama!),
+                                      ))
+                                  .toList(),
+                          onChanged: (mapelId) {
+                            ref
+                                .watch(assigmentNotifierProvider.notifier)
+                                .getAssigment(
+                                    newStatus: status,
+                                    newMapelId: mapelId.toString());
+                            ref
+                                .watch(dropdownClassNotifierProvider.notifier)
+                                .state = (mapelId.toString());
+                          },
+                        )),
+                      ),
+                    ],
+                  ),
+                )),
+            SliverPersistentHeader(
+                pinned: true,
+                delegate: PersistentHeader(
+                  60,
+                  60,
+                  widget: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Card(
+                        margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          menuMaxHeight: 250,
+                          borderRadius: BorderRadius.circular(15),
+                          iconEnabledColor: Colors.black,
+                          isExpanded: true,
+                          value: status,
+                          hint: const Text("Status Tugas"),
+                          items: statuses
+                              .map((key, value) {
+                                return MapEntry(
+                                    key,
+                                    DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(key),
+                                    ));
+                              })
+                              .values
+                              .toList(),
+                          onChanged: (status) {
+                            ref
+                                .watch(assigmentNotifierProvider.notifier)
+                                .getAssigment(
                                   newStatus: status,
-                                  newMapelId: value.toString());
-                          ref
-                              .watch(dropdownClassNotifierProvider.notifier)
-                              .changeStatus(value.toString());
-                        },
-                      )),
-                    ),
-                  ],
-                ),
-              )),
-          SliverPersistentHeader(
-              pinned: true,
-              delegate: PersistentHeader(
-                60,
-                60,
-                widget: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(5),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
+                                  newMapelId: classSelected.toString(),
+                                );
+                            ref
+                                .watch(dropdownStatusNotifierProvider.notifier)
+                                .state = (status!);
+                          },
+                        )),
                       ),
-                      child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                        menuMaxHeight: 250,
-                        borderRadius: BorderRadius.circular(15),
-                        iconEnabledColor: Colors.black,
-                        isExpanded: true,
-                        value: status,
-                        hint: const Text("Status Tugas"),
-                        items: statuses
-                            .map((key, value) {
-                              return MapEntry(
-                                  key,
-                                  DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(key),
-                                  ));
-                            })
-                            .values
-                            .toList(),
-                        onChanged: (value) {
-                          ref
-                              .watch(assigmentNotifierProvider.notifier)
-                              .getAssigment(
-                                newStatus: value,
-                                newMapelId: classSelected.toString(),
-                              );
-                          ref
-                              .watch(dropdownStatusNotifierProvider.notifier)
-                              .changeStatus(value!);
-                        },
-                      )),
-                    ),
-                  ],
-                ),
-              )),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              if (ref.watch(assigmentNotifierProvider).isLoading)
-                const SizedBox(
-                  height: 200,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: kGreenPrimary,
-                    ),
+                    ],
+                  ),
+                )),
+            SliverList(
+              delegate: SliverChildListDelegate([
+                SingleChildScrollView(
+                  padding: const EdgeInsets.only(bottom: 100),
+                  child: Column(
+                    children: [
+                      if (ref.watch(assigmentNotifierProvider).isLoading)
+                        const SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: kGreenPrimary,
+                            ),
+                          ),
+                        )
+                      else if (assigmentList != null &&
+                          assigmentList.isNotEmpty)
+                        Column(
+                          children: assigmentList
+                              .map(
+                                (assigment) => CardAssigment(assigment),
+                              )
+                              .toList(),
+                        )
+                      else
+                        const SizedBox(
+                          height: 200,
+                          child: Center(child: Text("Tugas tidak ada")),
+                        )
+                    ],
                   ),
                 )
-              else if (assigmentList != null && assigmentList.isNotEmpty)
-                Column(
-                  children: assigmentList
-                      .map(
-                        (assigment) => CardAssigment(assigment),
-                      )
-                      .toList(),
-                )
-              else
-                const SizedBox(
-                  height: 200,
-                  child: Center(child: Text("Tugas tidak ada")),
-                )
-            ]),
-          ),
-        ],
+              ]),
+            ),
+          ],
+        ),
       ),
     );
   }

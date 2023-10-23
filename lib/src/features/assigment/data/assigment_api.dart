@@ -29,6 +29,7 @@ final assigmentProvider = Provider<AssigmentApi>((ref) {
 class AssigmentApi {
   final IOClient client;
   final SecureStorage storage;
+
   AssigmentApi({required this.client, required this.storage});
 
   Future<Either<bool, bool>> sendAssignment(
@@ -73,17 +74,18 @@ class AssigmentApi {
     }
   }
 
-  Future<Either<String, List<Tugas>>> getAssigment(String token,
-      {String? mapelId, String? status}) async {
-    mapelId ??= "all";
+  Future<Either<String, List<Tugas>>> getAssigment({
+    String? mapelId,
+    String? status,
+  }) async {
     status ??= "all";
+    final token = await storage.read("token");
     Uri url = Uri.parse(
-      "$BASE_URL/student_area/tugas?mapel_id=$mapelId&is_done=$status",
+      "$BASE_URL/student_area/tugas?is_done=$status&rombel_id=all${mapelId == null || mapelId != "all" ? "&mapel_id=$mapelId" : ""}",
     );
 
-    final response = await client.get(url, headers: {
-      "Authorization": "Bearer $token",
-    });
+    final response =
+        await client.get(url, headers: {"Authorization": "Bearer $token"});
 
     if (response.statusCode == 200) {
       List result = jsonDecode(response.body)['data'];
@@ -91,7 +93,7 @@ class AssigmentApi {
           result.map((assigment) => Tugas.fromJson(assigment)).toList();
       return Right(listAssigment);
     }
-    return const Left("Tugas Tidak Ada");
+    return const Left("Gagal mengambil tugas");
   }
 
   Future<Either<String, Tugas>> getDetailAssigment(

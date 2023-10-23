@@ -1,26 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lms/src/features/assigment/data/assigment_api.dart';
-import 'package:lms/src/features/assigment/provider/assigment/assigment_state.dart';
+import 'package:lms/src/features/state.dart';
 import 'package:lms/src/features/storage/service/storage.dart';
+import 'package:lms/src/models/tugas.dart';
 
-class AssigmentNotifier extends StateNotifier<AssigmentState> {
-  final SecureStorage storage;
+import '../../../../core/utils/helper/exception_to_message.dart';
+
+class AssigmentNotifier extends StateNotifier<State<List<Tugas>>> {
   final AssigmentApi assigmentApi;
-  AssigmentNotifier({required this.storage, required this.assigmentApi})
-      : super(AssigmentState.noState());
+
+  AssigmentNotifier(this.assigmentApi) : super(State.noState());
 
   void getAssigment({String? newStatus, String? newMapelId}) async {
-    state = AssigmentState.loading();
-    final token = await storage.read('token');
-    final result = await assigmentApi.getAssigment(
-      token,
-      status: newStatus,
-      mapelId: newMapelId,
-    );
-    result.fold(
-      (l) => state = AssigmentState.error(l),
-      (r) => state = AssigmentState.finished(r),
-    );
+    state = State.loading();
+    try {
+      final result = await assigmentApi.getAssigment(
+        status: newStatus,
+        mapelId: newMapelId,
+      );
+      result.fold(
+        (error) => state = State.error(error),
+        (data) => state = State.finished(data),
+      );
+    } catch (exception) {
+      state = State.error(exceptionTomessage(exception));
+    }
   }
 }
 
@@ -28,6 +32,7 @@ class ArchiveAssigmentNotifier
     extends StateNotifier<List<Map<String, dynamic>>> {
   final AssigmentApi assigmentApi;
   final SecureStorage storage;
+
   ArchiveAssigmentNotifier({
     required this.assigmentApi,
     required this.storage,
