@@ -50,9 +50,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   void progressStream() {
-    Timer.periodic(const Duration(milliseconds: 18), (timer) {
-      ref.watch(percentProvider.notifier).state = (timer.tick / 100);
-      if (timer.tick >= 100) {
+    Timer.periodic(const Duration(milliseconds: 21), (timer) {
+      ref.watch(percentProvider.notifier).state = (timer.tick * 1);
+      if (timer.tick > 100) {
         timer.cancel();
       }
     });
@@ -91,11 +91,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     margin: const EdgeInsets.symmetric(horizontal: 50.0),
                     width: size.width,
                     child: LinearProgressIndicator(
+                      minHeight: 2,
                       backgroundColor: kWhiteBg,
                       value: ref.watch(percentProvider),
                     ),
                   ),
-                  Text("${ref.watch(percentProvider)} %"),
+                  Text(
+                    "${ref.watch(percentProvider)} %",
+                    style: const TextStyle(fontSize: 10),
+                  ),
                   const SizedBox(height: 50),
                 ],
               ),

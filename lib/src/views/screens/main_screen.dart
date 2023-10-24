@@ -83,10 +83,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               ref.watch(navProvider.notifier).changeIndex(newIndex);
             },
             type: BottomNavigationBarType.fixed,
-            elevation: 0,
-            selectedFontSize: 12,
+            elevation: 5,
+            selectedFontSize: 10,
             selectedItemColor: Theme.of(context).primaryColor,
-            unselectedFontSize: 10,
+            unselectedFontSize: 8,
             unselectedItemColor: Colors.grey.shade400,
             items: const [
               BottomNavigationBarItem(

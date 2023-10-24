@@ -64,6 +64,7 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                     tabBar: TabBar(
                   padding: const EdgeInsets.all(10),
                   unselectedLabelColor: Colors.black,
+                  indicatorSize: TabBarIndicatorSize.tab,
                   indicator: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(10),
@@ -117,8 +118,9 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                 child: Builder(builder: (context) {
                   return TimePlanner(
                     style: TimePlannerStyle(
-                      horizontalTaskPadding: 5,
-                      cellWidth: 200,
+                      horizontalTaskPadding: 2,
+                      cellWidth: 120,
+                      cellHeight: 50,
                     ),
                     headers: List.generate(7, (day) {
                       var datetime = DateTime(2023, 8, day);
@@ -128,6 +130,7 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                     }),
                     startHour: 7,
                     endHour: 19,
+                    use24HourFormat: true,
                     tasks: kelas.classes?.map((data) {
                       DateTime startTime =
                           DateTime.parse('1970-01-02 ${data.waktuMulai!}');
@@ -148,12 +151,13 @@ class _ClassScreenState extends ConsumerState<ClassScreen> {
                             child: ListTile(
                               title: Text(data.nama ?? "no name",
                                   textAlign: TextAlign.start,
+                                  maxLines: 1,
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 12)),
                               subtitle: Text(
                                   "${data.waktuMulai!.substring(0, 5)} - ${data.waktuSelesai!.substring(0, 5)}",
                                   style: const TextStyle(
-                                      color: Colors.black, fontSize: 10)),
+                                      color: Colors.white, fontSize: 10)),
                             )),
                         onTap: () {},
                       );
